@@ -4,7 +4,9 @@
         <meta charset="UTF-8">
         <title>{% block title %}FRTZ PawCare{% endblock %}</title>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><rect width=%22128%22 height=%22128%22 fill=%22%23000000%22/><path d=%22M 20 80 Q 64 20 108 80 L 108 100 L 20 100 Z%22 fill=%22%231e3a8a%22/><path d=%22M 40 80 Q 25 75 20 65 Q 25 55 30 55 Q 35 50 40 52 Q 45 50 50 55 Q 55 55 60 65 Q 55 75 40 80 Z%22 fill=%22%231e3a8a%22/><path d=%22M 88 80 Q 73 75 68 65 Q 73 55 78 55 Q 83 50 88 52 Q 93 50 98 55 Q 103 55 108 65 Q 103 75 88 80 Z%22 fill=%22%23ff6b35%22/></svg>">
-        {% block stylesheets %}{% endblock %}
+        {% block stylesheets %}
+            <link rel="stylesheet" href="{{ asset('styles/app.css') }}">
+        {% endblock %}
 
         {% block javascripts %}
             {% block importmap %}{{ importmap('app') }}{% endblock %}

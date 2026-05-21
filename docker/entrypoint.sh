@@ -41,7 +41,7 @@ if [ "${APP_ENV:-prod}" = "prod" ]; then
     php bin/console cache:warmup
     php bin/console assets:install public --no-interaction 2>/dev/null || true
     php bin/console importmap:install 2>/dev/null || true
-    php bin/console asset-map:compile 2>/dev/null || true
+    php bin/console asset-map:compile
 fi
 
 chown -R www-data:www-data var public/uploads 2>/dev/null || true
@@ -54,7 +54,7 @@ fi
 # Railway: listen on $PORT with a single PHP process (nginx+FPM background jobs often die after exec).
 if [ -n "${RAILWAY_PUBLIC_DOMAIN:-}" ] || [ -n "${RAILWAY_ENVIRONMENT:-}" ]; then
     echo "Railway detected: starting PHP on 0.0.0.0:${PORT}..."
-    exec php -S "0.0.0.0:${PORT}" -t public public/index.php
+    exec php -S "0.0.0.0:${PORT}" -t public public/router.php
 fi
 
 use_fpm=0
