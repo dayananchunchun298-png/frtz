@@ -39,6 +39,8 @@ if [ "${APP_ENV:-prod}" = "prod" ]; then
     echo "Warming production cache..."
     php bin/console cache:clear --no-warmup
     php bin/console cache:warmup
+    php bin/console assets:install public --no-interaction 2>/dev/null || true
+    php bin/console importmap:install 2>/dev/null || true
     php bin/console asset-map:compile 2>/dev/null || true
 fi
 

@@ -18,15 +18,19 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
+ENV COMPOSER_ALLOW_SUPERUSER=1 \
+    COMPOSER_NO_INTERACTION=1
+
 WORKDIR /app
 
 COPY . .
 
+# Skip post-install scripts (symfony-cmd) during image build; entrypoint warms cache at runtime.
 RUN if [ ! -f .env ]; then cp .env.dist .env; fi \
     && if [ "$INSTALL_DEV_DEPS" = "1" ]; then \
-         composer install --no-interaction --prefer-dist; \
+         composer install --prefer-dist --no-scripts; \
        else \
-         composer install --no-interaction --prefer-dist --no-dev --optimize-autoloader; \
+         composer install --prefer-dist --no-dev --optimize-autoloader --no-scripts; \
        fi
 
 COPY docker/php-local.ini /usr/local/etc/php/conf.d/99-local.ini
