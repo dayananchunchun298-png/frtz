@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}Admin - FRTZ PawCare{% endblock %}</title>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><rect width=%22128%22 height=%22128%22 fill=%22%23000000%22/><path d=%22M 20 80 Q 64 20 108 80 L 108 100 L 20 100 Z%22 fill=%22%231e3a8a%22/><path d=%22M 40 80 Q 25 75 20 65 Q 25 55 30 55 Q 35 50 40 52 Q 45 50 50 55 Q 55 55 60 65 Q 55 75 40 80 Z%22 fill=%22%231e3a8a%22/><path d=%22M 88 80 Q 73 75 68 65 Q 73 55 78 55 Q 83 50 88 52 Q 93 50 98 55 Q 103 55 108 65 Q 103 75 88 80 Z%22 fill=%22%23ff6b35%22/></svg>">
+        {% block stylesheets %}{% endblock %}
+        {% block javascripts %}{% block importmap %}{{ importmap('app') }}{% endblock %}{% endblock %}
+    </head>
+    <body>
+        <div class="admin-layout">
+            <aside class="admin-sidebar">
+                <div class="admin-brand">
+                    <img src="/logo.svg" alt="FRTZ PawCare" class="admin-logo" />
+                    <div class="admin-brand-text">
+                        <h2>FRTZ PawCare</h2>
+                        <small>Admin</small>
+                    </div>
+                </div>
+
+                <div class="admin-date-card">
+                    <div class="admin-date-main">{{ "now"|date("D, M j") }}</div>
+                    <div class="admin-date-sub">
+                        <span id="admin-clock">{{ "now"|date("h:i A") }}</span>
+                    </div>
+                </div>
+
+                <nav class="admin-menu">
+                    <a class="admin-menu-item active" href="{{ path('app_admin') }}#dashboard">Dashboard</a>
+                    {% if canManageAppointments|default(false) %}
+                        <a class="admin-menu-item" href="{{ path('app_admin') }}#appointments">Appointments
+                            <span class="admin-badge">{{ (appointments|default([]))|length }}</span>
+                        </a>
+                    {% endif %}
+                    <a class="admin-menu-item" href="{{ path('app_admin') }}#products">Products
+                        <span class="admin-badge">{{ (products|default([]))|length }}</span>
+                    </a>
+                    <a class="admin-menu-item" href="{{ path('app_admin') }}#services">Services
+                        <span class="admin-badge">{{ (services|default([]))|length }}</span>
+                    </a>
+                    <div class="admin-menu-spacer"></div>
+                    <a class="admin-menu-item" href="{{ path('app_home') }}">View Site</a>
+                </nav>
+
+                <div class="admin-sidebar-illustration">
+                    <span>🐾</span>
+                </div>
+            </aside>
+
+            <main class="admin-main">
+                <header class="admin-topbar">
+                    <div class="admin-topbar-left">
+                        <h1 class="admin-page-title">{% block page_title %}Dashboard{% endblock %}</h1>
+                    </div>
+                    <div class="admin-topbar-actions">
+                        <button class="admin-icon-btn" aria-label="Search">🔍</button>
+                        <button class="admin-icon-btn" aria-label="Menu">☰</button>
+                    </div>
+                </header>
+
+                {% for message in app.flashes('success') %}
+                    <div class="flash-message success">
+                        <div class="flash-content">
+                            <span class="flash-icon">✅</span>
+                            <span class="flash-text">{{ message }}</span>
+                        </div>
+                    </div>
+                {% endfor %}
+
+                <section class="admin-content">
+                    {% block body %}{% endblock %}
+                </section>
+
+                <footer class="admin-footer">
+                    <p>&copy; {{ "now"|date("Y") }} FRTZ PawCare. Admin.</p>
+                </footer>
+            </main>
+        </div>
+        <script>
+        (function() {
+            const el = document.getElementById('admin-clock');
+            if (!el) return;
+            function tick(){
+                const d = new Date();
+                const opts = { hour: '2-digit', minute: '2-digit' };
+                el.textContent = d.toLocaleTimeString([], opts);
+            }
+            setInterval(tick, 1000);
+        })();
+        </script>
+    </body>
+    </html>
+
+

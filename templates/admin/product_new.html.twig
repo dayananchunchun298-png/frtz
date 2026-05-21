@@ -1,0 +1,116 @@
+{% extends 'admin/base_admin.html.twig' %}
+
+{% block title %}Add New Product - Admin - FRTZ PawCare{% endblock %}
+
+{% block body %}
+<div class="page-hero">
+    <div class="hero-content">
+        <h1 class="hero-title">Add New Product</h1>
+        <p class="hero-subtitle">Add a new pet product to the shop</p>
+        <div class="hero-decoration">🔧</div>
+    </div>
+</div>
+
+<div class="appointment-page-container">
+    <div class="appointment-card">
+        <div class="card-header">
+            <h2>Product Details</h2>
+            <p>Fill in the details below to add a new product</p>
+        </div>
+        
+        {{ form_start(form, {'attr': {'class': 'product-form'}}) }}
+            <div class="form-group">
+                <label class="form-label">{{ form_label(form.name) }}</label>
+                {{ form_widget(form.name, {'attr': {'class': 'form-input'}}) }}
+                {{ form_errors(form.name) }}
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">{{ form_label(form.description) }}</label>
+                {{ form_widget(form.description, {'attr': {'class': 'form-input'}}) }}
+                {{ form_errors(form.description) }}
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">{{ form_label(form.price) }}</label>
+                    {{ form_widget(form.price, {'attr': {'class': 'form-input'}}) }}
+                    {{ form_errors(form.price) }}
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">{{ form_label(form.stock) }}</label>
+                    {{ form_widget(form.stock, {'attr': {'class': 'form-input'}}) }}
+                    {{ form_errors(form.stock) }}
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">{{ form_label(form.category) }}</label>
+                    {{ form_widget(form.category, {'attr': {'class': 'form-input'}}) }}
+                    {{ form_errors(form.category) }}
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">{{ form_label(form.petType) }}</label>
+                    {{ form_widget(form.petType, {'attr': {'class': 'form-input'}}) }}
+                    {{ form_errors(form.petType) }}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">{{ form_label(form.image) }}</label>
+                {{ form_widget(form.image, {'attr': {'class': 'form-input'}}) }}
+                {{ form_errors(form.image) }}
+            </div>
+            
+            <div class="form-group checkbox-group">
+                {{ form_widget(form.isActive) }}
+                <label>{{ form_label(form.isActive) }}</label>
+                {{ form_errors(form.isActive) }}
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <span class="btn-icon">💾</span>
+                    <span class="btn-text">Create Product</span>
+                </button>
+            </div>
+        {{ form_end(form) }}
+        
+        <div class="back-link-container">
+            <a href="{{ path('app_admin') }}" class="back-link">
+                <span class="back-icon">←</span>
+                Back to Admin Dashboard
+            </a>
+        </div>
+    </div>
+    
+    <div class="appointment-info">
+        <div class="info-card">
+            <h3>📝 Product Guidelines</h3>
+            <ul>
+                <li>Use clear, descriptive product names</li>
+                <li>Provide detailed descriptions for better customer understanding</li>
+                <li>Set accurate pricing and stock quantities</li>
+                <li>Choose appropriate categories and pet types</li>
+                <li>Use high-quality product images when available</li>
+            </ul>
+        </div>
+        
+        <div class="info-card">
+            <h3>🏷️ Categories Available</h3>
+            <ul>
+                <li>Food - Pet food and treats</li>
+                <li>Toys - Interactive and play items</li>
+                <li>Accessories - Collars, leashes, etc.</li>
+                <li>Health & Care - Medical supplies</li>
+                <li>Grooming - Bathing and grooming tools</li>
+                <li>Bedding - Beds and comfort items</li>
+                <li>Training - Training aids and tools</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

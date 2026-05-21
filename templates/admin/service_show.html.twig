@@ -1,0 +1,63 @@
+{% extends 'admin/base_admin.html.twig' %}
+
+{% block title %}Service Details - Admin - FRTZ PawCare{% endblock %}
+
+{% block body %}
+<div class="page-hero">
+    <div class="hero-content">
+        <h1 class="hero-title">Service Details</h1>
+        <p class="hero-subtitle">View service information</p>
+        <div class="hero-decoration">🧴</div>
+    </div>
+</div>
+
+<div class="appointment-page-container">
+    <div class="appointment-card">
+        <div class="card-header">
+            <h2>{{ service.name }}</h2>
+            <p>Status: {{ service.isActive ? 'Active' : 'Inactive' }}</p>
+        </div>
+
+        <div class="card-body">
+            <div class="appointment-details">
+                <div class="detail-item">
+                    <span class="detail-icon">💬</span>
+                    <div class="detail-content">
+                        <span class="detail-label">Description</span>
+                        <span class="detail-value">{{ service.description ?: 'No description' }}</span>
+                    </div>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-icon">💰</span>
+                    <div class="detail-content">
+                        <span class="detail-label">Price</span>
+                        <span class="detail-value">₱{{ service.price }}</span>
+                    </div>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-icon">🐾</span>
+                    <div class="detail-content">
+                        <span class="detail-label">Pet Type</span>
+                        <span class="detail-value">{{ service.petType|title }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-actions">
+            <a href="{{ path('app_admin_service_edit', {'id': service.id}) }}" class="btn btn-primary">
+                <span class="btn-icon">✏️</span>
+                Edit Service
+            </a>
+            <a href="{{ path('app_admin') }}" class="btn btn-outline">
+                <span class="btn-icon">←</span>
+                Back to Admin
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

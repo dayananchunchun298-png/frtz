@@ -1,0 +1,150 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}FRTZ PawCare — Healthy Food & Grooming{% endblock %}
+
+{% block body %}
+    <!-- 1) Hero -->
+    <section class="page-hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Healthy Pets. Happy Homes.</h1>
+            <p class="hero-subtitle">
+                Premium food for dogs & cats, plus grooming appointments that feel like a spa day.
+            </p>
+
+            <div class="hero-actions">
+                <a href="{{ path('app_shop') }}" class="btn btn-primary btn-large">
+                    <span class="btn-text">Shop Pet Food</span>
+                </a>
+                <a href="{{ path('app_appointment_index') }}" class="btn btn-outline btn-large">
+                    <span class="btn-text">Book Grooming</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2) Shop & Services -->
+    <section class="content" id="services">
+        <h2>Everything PawCare in one place</h2>
+
+        <div class="services">
+            {% for s in services|default([]) %}
+                <div class="service">
+                    {% if s.slug == 'dog-food' %}
+                        <h3>{{ s.name }}</h3>
+                        <p>Nutrient-rich recipes for energetic pups—every day, every mood.</p>
+                    {% elseif s.slug == 'cat-food' %}
+                        <h3>{{ s.name }}</h3>
+                        <p>Wholesome formulas for curious cats and sensitive tummies.</p>
+                    {% elseif s.slug == 'grooming' %}
+                        <h3>{{ s.name }}</h3>
+                        <p>Bath, brush, trim, and cozy care—handled with love.</p>
+                    {% else %}
+                        <h3>{{ s.name }}</h3>
+                        <p>Quality care built for pets and pet parents.</p>
+                    {% endif %}
+
+                    <div class="service-actions">
+                        <a href="{{ path('app_shop') }}" class="btn btn-secondary">
+                            <span class="btn-text">Explore</span>
+                        </a>
+                        <a href="{{ path('app_appointment_index') }}" class="btn btn-outline">
+                            <span class="btn-text">Book</span>
+                        </a>
+                    </div>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <h3>Nothing to show yet</h3>
+                    <p>Your PawCare services will appear here soon.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- 3) How it works -->
+    <section class="content" id="how-it-works">
+        <h2>How PawCare works</h2>
+
+        <div class="metrics-grid">
+            <div class="info-card">
+                <h3>Step 1: Choose your care</h3>
+                <ul>
+                    <li>Pick pet food in the shop</li>
+                    <li>Or book grooming from your appointments</li>
+                </ul>
+            </div>
+
+            <div class="info-card">
+                <h3>Step 2: Get confirmed</h3>
+                <ul>
+                    <li>Your appointment is saved securely</li>
+                    <li>You get updates through the site</li>
+                </ul>
+            </div>
+
+            <div class="info-card">
+                <h3>Step 3: Enjoy happy results</h3>
+                <ul>
+                    <li>Fresh, healthy, and loved pets</li>
+                    <li>Shop again anytime</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4) Testimonials -->
+    <section class="content" id="testimonials">
+        <h2>Pet parents love the vibe</h2>
+
+        <div class="services">
+            <div class="service">
+                <h3>“Spa day for my dog”</h3>
+                <p>“His fur was so soft and he smelled amazing. The booking was easy too.”</p>
+            </div>
+            <div class="service">
+                <h3>“My cat finally eats!”</h3>
+                <p>“The cat food is perfect. She’s excited every time the bowl comes out.”</p>
+            </div>
+            <div class="service">
+                <h3>“Great system”</h3>
+                <p>“Clean pages, quick choices, and I can manage everything in one place.”</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5) Final CTA + Contact -->
+    <section class="content" id="get-started">
+        <h2>Ready to start?</h2>
+
+        <div class="appointment-card">
+            <div class="card-header">
+                <h2>Take care of your pet today</h2>
+                <p>Shop food now or book your next grooming session.</p>
+            </div>
+
+            <div class="card-actions">
+                <a href="{{ path('app_shop') }}" class="btn btn-primary btn-large">
+                    <span class="btn-text">Shop now</span>
+                </a>
+                <a href="{{ path('app_appointment_index') }}" class="btn btn-outline btn-large">
+                    <span class="btn-text">Book grooming</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="metrics-grid spaced-grid">
+            <div class="info-card">
+                <h3>Call us</h3>
+                <ul>
+                    <li><a href="tel:09267263979">09267263979</a></li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h3>Email us</h3>
+                <ul>
+                    <li><a href="mailto:dayananchunchun298@gmail.com">dayananchunchun298@gmail.com</a></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+{% endblock %}

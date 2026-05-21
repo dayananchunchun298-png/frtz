@@ -1,0 +1,436 @@
+{% extends 'admin/base_admin.html.twig' %}
+
+{% block page_title %}Dashboard{% endblock %}
+
+{% block title %}Admin Dashboard - FRTZ PawCare{% endblock %}
+
+{% block body %}
+<div class="dashboard-hero" style="margin-bottom:24px;">
+    <div class="appointments-container" style="margin:0 auto;">
+        <div class="appointments-header">
+            <div class="header-content">
+                <h2>Activity Tracker</h2>
+                <p>Professionally trained and certified dog and cat stylists are in our service!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section id="dashboard-tab" class="tab-content" style="display: block;">
+    <div class="appointments-container" style="margin-top: 0;">
+        <div class="appointments-header" style="margin-bottom: 10px;">
+            <div class="header-content">
+                <h2>Overview</h2>
+                <p>Snapshot of what's happening today</p>
+            </div>
+        </div>
+        <div class="metrics-grid">
+            {% if canManageAppointments|default(false) %}
+                <div class="metric-card">
+                    <div class="metric-label">Appointments</div>
+                    <div class="metric-value">{{ appointments|length }}</div>
+                </div>
+            {% endif %}
+            <div class="metric-card">
+                <div class="metric-label">Products</div>
+                <div class="metric-value">{{ products|length }}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Services</div>
+                <div class="metric-value">{{ services|length }}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Today</div>
+                <div class="metric-value">{{ "now"|date('M d') }}</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Tabs removed; sidebar controls navigation -->
+
+<div id="appointments-tab" class="tab-content" style="display: {{ canManageAppointments|default(false) ? 'block' : 'none' }};">
+    {% if canManageAppointments|default(false) %}
+    <div class="appointments-header">
+        <div class="header-content">
+            <h2>All Appointments</h2>
+            <p>Manage and track all pet appointments in the system</p>
+        </div>
+        <a href="{{ path('app_admin_appointment_new') }}" class="btn btn-primary new-appointment-btn">
+            <span class="btn-icon">+</span>
+            <span class="btn-text">Create New Appointment</span>
+        </a>
+    </div>
+
+    <div class="appointments-grid">
+        {% for appointment in appointments %}
+            <div class="appointment-card" data-aos="fade-up" data-aos-delay="{{ loop.index * 100 }}">
+                <div class="card-header">
+                    <div class="pet-info">
+                        <h3>{{ appointment.Name }}</h3>
+                        <span class="pet-emoji">
+                            {% if appointment.PetType == 'dog' %}
+                                🐕
+                            {% elseif appointment.PetType == 'cat' %}
+                                🐱
+                            {% else %}
+                                🐾
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="appointment-id">#{{ appointment.id }}</div>
+                </div>
+                
+                <div class="card-body">
+                    <div class="appointment-details">
+                        <div class="detail-item">
+                            <span class="detail-icon">
+                                {% if appointment.PetType == 'dog' %}
+                                    🐕
+                                {% elseif appointment.PetType == 'cat' %}
+                                    🐱
+                                {% else %}
+                                    🐾
+                                {% endif %}
+                            </span>
+                            <div class="detail-content">
+                                <span class="detail-label">Pet Type</span>
+                                <span class="detail-value">
+                                    {% if appointment.PetType == 'dog' %}
+                                        Dog 🐕
+                                    {% elseif appointment.PetType == 'cat' %}
+                                        Cat 🐱
+                                    {% else %}
+                                        {{ appointment.PetType|title }}
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <span class="detail-icon">📅</span>
+                            <div class="detail-content">
+                                <span class="detail-label">Date & Time</span>
+                                <span class="detail-value">
+                                    {% if appointment.AppointmentDate %}
+                                        {{ appointment.AppointmentDate|date('M d, Y') }}
+                                        <br>
+                                        <small>{{ appointment.AppointmentDate|date('g:i A') }}</small>
+                                    {% else %}
+                                        <em>Not scheduled</em>
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-actions">
+                    <a href="{{ path('app_admin_appointment_show', {'id': appointment.id}) }}" class="btn btn-outline">
+                        <span class="btn-icon">👁️</span>
+                        View Details
+                    </a>
+                    <a href="{{ path('app_admin_appointment_edit', {'id': appointment.id}) }}" class="btn btn-primary">
+                        <span class="btn-icon">✏️</span>
+                        Edit
+                    </a>
+                    <form method="post" action="{{ path('app_admin_appointment_delete', {'id': appointment.id}) }}" onsubmit="return confirm('Are you sure you want to delete this appointment?');" style="display: inline;">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ appointment.id) }}">
+                        <button type="submit" class="btn btn-danger">
+                            <span class="btn-icon">🗑️</span>
+                            Delete
+                        </button>
+                    </form>
+                </div>
+                
+                <div class="card-status">
+                    {% if appointment.AppointmentDate and appointment.AppointmentDate > date() %}
+                        <span class="status-badge status-upcoming">Upcoming</span>
+                    {% elseif appointment.AppointmentDate and appointment.AppointmentDate <= date() %}
+                        <span class="status-badge status-completed">Completed</span>
+                    {% else %}
+                        <span class="status-badge status-pending">Pending</span>
+                    {% endif %}
+                </div>
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">🐾</div>
+                <h3>No Appointments Yet</h3>
+                <p>Start managing appointments by creating the first one.</p>
+                <a href="{{ path('app_admin_appointment_new') }}" class="btn btn-primary">
+                    <span class="btn-icon">+</span>
+                    <span class="btn-text">Create First Appointment</span>
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+<!-- Products Tab Content -->
+<div id="products-tab" class="tab-content" style="display: none;">
+    <div class="appointments-container">
+        <div class="appointments-header">
+            <div class="header-content">
+                <h2>All Products</h2>
+                <p>Manage and track all pet products in the system</p>
+            </div>
+            <a href="{{ path('app_admin_product_new') }}" class="btn btn-primary new-appointment-btn">
+                <span class="btn-icon">+</span>
+                <span class="btn-text">Add New Product</span>
+            </a>
+        </div>
+
+        <div class="appointments-grid">
+            {% for product in products %}
+                <div class="appointment-card" data-aos="fade-up" data-aos-delay="{{ loop.index * 100 }}">
+                    <div class="card-header">
+                        <div class="pet-info">
+                            <h3>{{ product.name }}</h3>
+                            <span class="pet-emoji">
+                                {% if product.petType == 'dog' %}
+                                    🐕
+                                {% elseif product.petType == 'cat' %}
+                                    🐱
+                                {% elseif product.petType == 'bird' %}
+                                    🐦
+                                {% elseif product.petType == 'fish' %}
+                                    🐠
+                                {% else %}
+                                    🐾
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="appointment-id">#{{ product.id }}</div>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div class="appointment-details">
+                            <div class="detail-item">
+                                <span class="detail-icon">🏷️</span>
+                                <div class="detail-content">
+                                    <span class="detail-label">Category</span>
+                                    <span class="detail-value">{{ product.category|title }}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-item">
+                                <span class="detail-icon">💰</span>
+                                <div class="detail-content">
+                                <span class="detail-label">Price</span>
+                                <span class="detail-value">₱{{ product.price }}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-item">
+                                <span class="detail-icon">📦</span>
+                                <div class="detail-content">
+                                    <span class="detail-label">Stock</span>
+                                    <span class="detail-value">
+                                        {% if product.stock > 0 %}
+                                            {{ product.stock }} available
+                                        {% else %}
+                                            Out of Stock
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-actions">
+                        <a href="{{ path('app_admin_product_show', {'id': product.id}) }}" class="btn btn-outline">
+                            <span class="btn-icon">👁️</span>
+                            View Details
+                        </a>
+                        <a href="{{ path('app_admin_product_edit', {'id': product.id}) }}" class="btn btn-primary">
+                            <span class="btn-icon">✏️</span>
+                            Edit
+                        </a>
+                        <form method="post" action="{{ path('app_admin_product_delete', {'id': product.id}) }}" onsubmit="return confirm('Are you sure you want to delete this product?');" style="display: inline;">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product.id) }}">
+                            <button type="submit" class="btn btn-danger">
+                                <span class="btn-icon">🗑️</span>
+                                Delete
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div class="card-status">
+                        {% if product.isActive %}
+                            <span class="status-badge status-upcoming">Active</span>
+                        {% else %}
+                            <span class="status-badge status-completed">Inactive</span>
+                        {% endif %}
+                    </div>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">🛍️</div>
+                    <h3>No Products Yet</h3>
+                    <p>Start managing products by adding the first one.</p>
+                    <a href="{{ path('app_admin_product_new') }}" class="btn btn-primary">
+                        <span class="btn-icon">+</span>
+                        <span class="btn-text">Add First Product</span>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Services Tab Content -->
+<div id="services-tab" class="tab-content" style="display: none;">
+    <div class="appointments-container">
+        <div class="appointments-header">
+            <div class="header-content">
+                <h2>All Services</h2>
+                <p>Manage and track all services offered</p>
+            </div>
+            <a href="{{ path('app_admin_service_new') }}" class="btn btn-primary new-appointment-btn">
+                <span class="btn-icon">+</span>
+                <span class="btn-text">Add New Service</span>
+            </a>
+        </div>
+
+        <div class="appointments-grid">
+            {% for service in services %}
+                <div class="appointment-card" data-aos="fade-up" data-aos-delay="{{ loop.index * 100 }}">
+                    <div class="card-header">
+                        <div class="pet-info">
+                            <h3>{{ service.name }}</h3>
+                            <span class="pet-emoji">
+                                {% if service.petType == 'dog' %}
+                                    🐕
+                                {% elseif service.petType == 'cat' %}
+                                    🐱
+                                {% elseif service.petType == 'bird' %}
+                                    🐦
+                                {% elseif service.petType == 'fish' %}
+                                    🐠
+                                {% else %}
+                                    🐾
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="appointment-id">#{{ service.id }}</div>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div class="appointment-details">
+                            <div class="detail-item">
+                                <span class="detail-icon">💰</span>
+                                <div class="detail-content">
+                                    <span class="detail-label">Price</span>
+                                    <span class="detail-value">${{ service.price }}</span>
+                                </div>
+                            </div>
+
+                            <div class="detail-item">
+                                <span class="detail-icon">💬</span>
+                                <div class="detail-content">
+                                    <span class="detail-label">Description</span>
+                                    <span class="detail-value">{{ service.description ?: '—' }}</span>
+                                </div>
+                            </div>
+
+                            <div class="detail-item">
+                                <span class="detail-icon">🐾</span>
+                                <div class="detail-content">
+                                    <span class="detail-label">Pet Type</span>
+                                    <span class="detail-value">{{ service.petType|title }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-actions">
+                        <a href="{{ path('app_admin_service_show', {'id': service.id}) }}" class="btn btn-outline">
+                            <span class="btn-icon">👁️</span>
+                            View Details
+                        </a>
+                        <a href="{{ path('app_admin_service_edit', {'id': service.id}) }}" class="btn btn-primary">
+                            <span class="btn-icon">✏️</span>
+                            Edit
+                        </a>
+                        <form method="post" action="{{ path('app_admin_service_delete', {'id': service.id}) }}" onsubmit="return confirm('Are you sure you want to delete this service?');" style="display: inline;">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ service.id) }}">
+                            <button type="submit" class="btn btn-danger">
+                                <span class="btn-icon">🗑️</span>
+                                Delete
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="card-status">
+                        {% if service.isActive %}
+                            <span class="status-badge status-upcoming">Active</span>
+                        {% else %}
+                            <span class="status-badge status-completed">Inactive</span>
+                        {% endif %}
+                    </div>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">🧴</div>
+                    <h3>No Services Yet</h3>
+                    <p>Start managing services by adding the first one.</p>
+                    <a href="{{ path('app_admin_service_new') }}" class="btn btn-primary">
+                        <span class="btn-icon">+</span>
+                        <span class="btn-text">Add First Service</span>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+function showTab(tabName) {
+    // Hide all tab contents
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.style.display = 'none';
+    });
+    // Show selected tab content
+    const tabId = `${tabName}-tab`;
+    const content = document.getElementById(tabId);
+    if (content) content.style.display = 'block';
+    // Update sidebar highlight
+    const menuLinks = document.querySelectorAll('.admin-menu .admin-menu-item');
+    menuLinks.forEach(link => {
+        const href = link.getAttribute('href') || '';
+        const isDash = href.endsWith('#dashboard');
+        const isMatch = href.endsWith('#' + tabName);
+        link.classList.toggle('active', isDash ? tabName === 'dashboard' : isMatch);
+    });
+    // Reflect in URL hash for consistency
+    if (window.location.hash !== '#' + tabName) {
+        history.replaceState(null, '', '#' + tabName);
+    }
+}
+
+// Initialize from hash on load
+document.addEventListener('DOMContentLoaded', function () {
+    const initial = (window.location.hash || '').replace('#', '');
+    const canManageAppointments = {{ canManageAppointments|default(false) ? 'true' : 'false' }};
+    const isAllowedTab =
+        initial === 'dashboard' ||
+        initial === 'products' ||
+        initial === 'services' ||
+        (canManageAppointments && initial === 'appointments');
+
+    if (isAllowedTab) {
+        showTab(initial);
+    } else {
+        showTab(canManageAppointments ? 'dashboard' : 'products');
+    }
+});
+
+// Sync when hash changes (e.g., via sidebar clicks)
+window.addEventListener('hashchange', function () {
+    const sec = (window.location.hash || '').replace('#', '');
+    if (sec) showTab(sec);
+});
+</script>
+{% endblock %}

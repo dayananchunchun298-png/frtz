@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Account - FRTZ PawCare{% endblock %}
+
+{% block body %}
+<div class="page-hero">
+    <div class="hero-content">
+        <h1 class="hero-title">My Account</h1>
+        <p class="hero-subtitle">Profile and order history (synced with the customer API)</p>
+    </div>
+</div>
+
+<div class="appointments-container">
+    <div class="appointment-card" style="margin-bottom: 2rem;">
+        <h2>Profile</h2>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Verified:</strong> {{ user.isVerified ? 'Yes' : 'No — check your inbox' }}</p>
+        <p><strong>Role:</strong>
+            {% if is_granted('ROLE_ADMIN') %}Admin
+            {% elseif is_granted('ROLE_STAFF') %}Staff
+            {% else %}Customer{% endif %}
+        </p>
+    </div>
+
+    <div class="appointments-header">
+        <h2>My Orders</h2>
+        <p>Same data available via <code>GET /api/customer/orders</code> (JWT).</p>
+    </div>
+
+    {% if orders %}
+        <div class="appointments-grid">
+            {% for order in orders %}
+                <div class="appointment-card">
+                    <h3>Order #{{ order.id }}</h3>
+                    <p><strong>Status:</strong> {{ order.status|capitalize }}</p>
+                    <p><strong>Total:</strong> ${{ order.total }}</p>
+                    <p><strong>Date:</strong> {{ order.createdAt|date('M d, Y g:i A') }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <h3>No orders yet</h3>
+            <p>Visit the <a href="{{ path('app_shop') }}">shop</a> to place your first order.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

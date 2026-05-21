@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Sign up{% endblock %}
+
+{% block body %}
+    <div class="page-hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Join the PawCare club</h1>
+            <p class="hero-subtitle">Create your account in seconds</p>
+            <div class="hero-decoration">🧠</div>
+        </div>
+    </div>
+
+    <div class="auth-page-container">
+        <div class="appointment-card auth-card">
+            <div class="card-header">
+                <h2>Create account</h2>
+                <p>Verification required before first login</p>
+            </div>
+
+            <div class="card-body">
+                {{ form_start(registrationForm, { 'attr': { 'class': 'auth-form' } }) }}
+                    <div class="form-group">
+                        {{ form_label(registrationForm.email, 'Email', { 'label_attr': { 'class': 'form-label' } }) }}
+                        {{ form_widget(registrationForm.email, { 'attr': { 'class': 'form-input', 'placeholder': 'you@example.com', 'autocomplete': 'email' } }) }}
+                        {{ form_errors(registrationForm.email) }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(registrationForm.plainPassword.first, 'Password', { 'label_attr': { 'class': 'form-label' } }) }}
+                        {{ form_widget(registrationForm.plainPassword.first, { 'attr': { 'class': 'form-input', 'placeholder': 'At least 6 characters' } }) }}
+                        {{ form_errors(registrationForm.plainPassword.first) }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(registrationForm.plainPassword.second, 'Repeat password', { 'label_attr': { 'class': 'form-label' } }) }}
+                        {{ form_widget(registrationForm.plainPassword.second, { 'attr': { 'class': 'form-input', 'placeholder': 'Repeat your password' } }) }}
+                        {{ form_errors(registrationForm.plainPassword.second) }}
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="btn btn-primary btn-large" type="submit">
+                            <span class="btn-icon">🚀</span>
+                            <span class="btn-text">Sign up</span>
+                        </button>
+                    </div>
+
+                    {{ form_row(registrationForm._token) }}
+                {{ form_end(registrationForm, { render_rest: false }) }}
+
+                <div class="auth-links">
+                    <a href="{{ path('app_login') }}" class="btn btn-outline btn-large">
+                        <span class="btn-icon">🔒</span>
+                        <span class="btn-text">I already have an account</span>
+                    </a>
+                </div>
+
+                <div class="staff-oauth-divider">
+                    <span>Staff</span>
+                </div>
+                <p class="staff-oauth-hint">Sign in with Google (verified automatically).</p>
+                <div class="form-actions">
+                    <a href="{{ path('app_google_connect') }}" class="btn btn-secondary btn-large">
+                        <span class="btn-icon">🔐</span>
+                        <span class="btn-text">Continue with Google (Staff)</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

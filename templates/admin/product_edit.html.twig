@@ -1,0 +1,128 @@
+{% extends 'admin/base_admin.html.twig' %}
+
+{% block title %}Edit Product - Admin - FRTZ PawCare{% endblock %}
+
+{% block body %}
+<div class="page-hero">
+    <div class="hero-content">
+        <h1 class="hero-title">Edit Product</h1>
+        <p class="hero-subtitle">Update product details</p>
+        <div class="hero-decoration">🔧</div>
+    </div>
+</div>
+
+<div class="appointment-page-container">
+    <div class="appointment-card">
+        <div class="card-header">
+            <h2>Edit Product Details</h2>
+            <p>Update the product information below</p>
+        </div>
+        
+        {{ form_start(form, {'attr': {'class': 'product-form'}}) }}
+            <div class="form-group">
+                <label class="form-label">{{ form_label(form.name) }}</label>
+                {{ form_widget(form.name, {'attr': {'class': 'form-input'}}) }}
+                {{ form_errors(form.name) }}
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">{{ form_label(form.description) }}</label>
+                {{ form_widget(form.description, {'attr': {'class': 'form-input'}}) }}
+                {{ form_errors(form.description) }}
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">{{ form_label(form.price) }}</label>
+                    {{ form_widget(form.price, {'attr': {'class': 'form-input'}}) }}
+                    {{ form_errors(form.price) }}
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">{{ form_label(form.stock) }}</label>
+                    {{ form_widget(form.stock, {'attr': {'class': 'form-input'}}) }}
+                    {{ form_errors(form.stock) }}
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">{{ form_label(form.category) }}</label>
+                    {{ form_widget(form.category, {'attr': {'class': 'form-input'}}) }}
+                    {{ form_errors(form.category) }}
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">{{ form_label(form.petType) }}</label>
+                    {{ form_widget(form.petType, {'attr': {'class': 'form-input'}}) }}
+                    {{ form_errors(form.petType) }}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">{{ form_label(form.image) }}</label>
+                {{ form_widget(form.image, {'attr': {'class': 'form-input'}}) }}
+                {{ form_errors(form.image) }}
+            </div>
+            
+            <div class="form-group checkbox-group">
+                {{ form_widget(form.isActive) }}
+                <label>{{ form_label(form.isActive) }}</label>
+                {{ form_errors(form.isActive) }}
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <span class="btn-icon">💾</span>
+                    <span class="btn-text">Update Product</span>
+                </button>
+            </div>
+        {{ form_end(form) }}
+        
+        <div class="form-actions-secondary">
+            <a href="{{ path('app_admin') }}" class="btn btn-outline">
+                <span class="btn-icon">←</span>
+                <span class="btn-text">Back to Admin Dashboard</span>
+            </a>
+            <a href="{{ path('app_admin_product_show', {'id': product.id}) }}" class="btn btn-secondary">
+                <span class="btn-icon">👁️</span>
+                <span class="btn-text">View Details</span>
+            </a>
+        </div>
+        
+        <div class="danger-zone">
+            <h3>⚠️ Danger Zone</h3>
+            <p>Permanently delete this product. This action cannot be undone.</p>
+            <form method="post" action="{{ path('app_admin_product_delete', {'id': product.id}) }}" onsubmit="return confirm('Are you sure you want to delete this product?');">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product.id) }}">
+                <button type="submit" class="btn btn-danger">
+                    <span class="btn-icon">🗑️</span>
+                    <span class="btn-text">Delete Product</span>
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="appointment-info">
+        <div class="info-card">
+            <h3>📝 Editing Tips</h3>
+            <ul>
+                <li>Update pricing and stock as needed</li>
+                <li>Ensure all information is accurate</li>
+                <li>Changes will be reflected immediately in the shop</li>
+                <li>Consider the impact on existing orders</li>
+            </ul>
+        </div>
+        
+        <div class="info-card">
+            <h3>📊 Current Product Info</h3>
+            <ul>
+                <li><strong>Created:</strong> {{ product.createdAt|date('M d, Y') }}</li>
+                <li><strong>Last Updated:</strong> {{ product.updatedAt ? product.updatedAt|date('M d, Y') : 'Never' }}</li>
+                <li><strong>Status:</strong> {{ product.isActive ? 'Active' : 'Inactive' }}</li>
+                <li><strong>Current Stock:</strong> {{ product.stock }} units</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,140 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Appointment Details - FRTZ PawCare{% endblock %}
+
+{% block body %}
+<div class="page-hero">
+    <div class="hero-content">
+        <h1 class="hero-title">Appointment Details</h1>
+        <p class="hero-subtitle">View your pet's appointment information</p>
+        <div class="hero-decoration">📋</div>
+    </div>
+</div>
+
+<div class="appointment-detail-container">
+    <div class="appointment-detail-card">
+        <div class="card-header">
+            <div class="header-content">
+                <h2>{{ appointment.Name }}'s Appointment</h2>
+                <div class="appointment-id">Appointment #{{ appointment.id }}</div>
+            </div>
+            <div class="pet-avatar">
+                {% if appointment.PetType == 'dog' %}
+                    🐕
+                {% elseif appointment.PetType == 'cat' %}
+                    🐱
+                {% else %}
+                    🐾
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="card-body">
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <div class="detail-icon">🏷️</div>
+                    <div class="detail-content">
+                        <span class="detail-label">Pet Name</span>
+                        <span class="detail-value">{{ appointment.Name }}</span>
+                    </div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-icon">
+                        {% if appointment.PetType == 'dog' %}
+                            🐕
+                        {% elseif appointment.PetType == 'cat' %}
+                            🐱
+                        {% else %}
+                            🐾
+                        {% endif %}
+                    </div>
+                    <div class="detail-content">
+                        <span class="detail-label">Pet Type</span>
+                        <span class="detail-value">
+                            {% if appointment.PetType == 'dog' %}
+                                Dog 🐕
+                            {% elseif appointment.PetType == 'cat' %}
+                                Cat 🐱
+                            {% else %}
+                                {{ appointment.PetType|title }}
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-icon">📅</div>
+                    <div class="detail-content">
+                        <span class="detail-label">Appointment Date & Time</span>
+                        <span class="detail-value">
+                            {% if appointment.AppointmentDate %}
+                                {{ appointment.AppointmentDate|date('l, F j, Y') }}
+                                <br>
+                                <small>{{ appointment.AppointmentDate|date('g:i A') }}</small>
+                            {% else %}
+                                <em>Not scheduled</em>
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-icon">🕒</div>
+                    <div class="detail-content">
+                        <span class="detail-label">Status</span>
+                        <span class="detail-value">
+                            {% if appointment.AppointmentDate and appointment.AppointmentDate > date() %}
+                                <span class="status-badge status-upcoming">Upcoming</span>
+                            {% elseif appointment.AppointmentDate and appointment.AppointmentDate <= date() %}
+                                <span class="status-badge status-completed">Completed</span>
+                            {% else %}
+                                <span class="status-badge status-pending">Pending</span>
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card-actions">
+            <a href="{{ path('app_appointment_index') }}" class="btn btn-outline">
+                <span class="btn-icon">←</span>
+                <span class="btn-text">Back to List</span>
+            </a>
+        </div>
+    </div>
+    
+    <div class="appointment-info">
+        <div class="info-card">
+            <h3>📋 What to Bring</h3>
+            <ul>
+                <li>Your pet's vaccination records</li>
+                <li>Any current medications</li>
+                <li>List of questions or concerns</li>
+                <li>Pet carrier (for smaller pets)</li>
+            </ul>
+        </div>
+        
+        <div class="info-card">
+            <h3>📍 Location & Contact</h3>
+            <div class="location-info">
+                <p><strong>Address:</strong><br>123 Pet Care Lane<br>Veterinary City, VC 12345</p>
+                <p><strong>Phone:</strong> (555) 123-PAWS</p>
+                <p><strong>Emergency:</strong> (555) 911-PETS</p>
+            </div>
+        </div>
+        
+        {% if appointment.AppointmentDate and appointment.AppointmentDate > date() %}
+        <div class="info-card upcoming-info">
+            <h3>⏰ Upcoming Appointment</h3>
+            <p>Your appointment is scheduled for:</p>
+            <div class="upcoming-date">
+                {{ appointment.AppointmentDate|date('M j, Y') }} at {{ appointment.AppointmentDate|date('g:i A') }}
+            </div>
+            <p>Please arrive 10 minutes early for check-in.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -8,6 +8,18 @@ framework:
     #esi: true
     #fragments: true
 
+when@dev:
+    framework:
+        session:
+            cookie_secure: false
+        trusted_proxies: 'private_ranges,127.0.0.0/8'
+        trusted_headers: ['x-forwarded-for', 'x-forwarded-proto', 'x-forwarded-port', 'x-forwarded-host']
+
+when@prod:
+    framework:
+        trusted_proxies: 'private_ranges,REMOTE_ADDR'
+        trusted_headers: ['x-forwarded-for', 'x-forwarded-proto', 'x-forwarded-port', 'x-forwarded-host']
+
 when@test:
     framework:
         test: true

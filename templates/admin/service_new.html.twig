@@ -1,0 +1,76 @@
+{% extends 'admin/base_admin.html.twig' %}
+
+{% block title %}Add New Service - Admin - FRTZ PawCare{% endblock %}
+
+{% block body %}
+<div class="page-hero">
+    <div class="hero-content">
+        <h1 class="hero-title">Add New Service</h1>
+        <p class="hero-subtitle">Add a new service offering</p>
+        <div class="hero-decoration">🧴</div>
+    </div>
+</div>
+
+<div class="appointment-page-container">
+    <div class="appointment-card">
+        <div class="card-header">
+            <h2>Service Details</h2>
+            <p>Fill in the details below to add a new service</p>
+        </div>
+        
+        {{ form_start(form, {'attr': {'class': 'product-form'}}) }}
+            <div class="form-group">
+                <label class="form-label">{{ form_label(form.name) }}</label>
+                {{ form_widget(form.name, {'attr': {'class': 'form-input'}}) }}
+                {{ form_errors(form.name) }}
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">{{ form_label(form.description) }}</label>
+                {{ form_widget(form.description, {'attr': {'class': 'form-input'}}) }}
+                {{ form_errors(form.description) }}
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">{{ form_label(form.price) }}</label>
+                    {{ form_widget(form.price, {'attr': {'class': 'form-input'}}) }}
+                    {{ form_errors(form.price) }}
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">{{ form_label(form.petType) }}</label>
+                    {{ form_widget(form.petType, {'attr': {'class': 'form-input'}}) }}
+                    {{ form_errors(form.petType) }}
+                </div>
+            </div>
+            
+            <div class="form-note">
+                <p>💡 Tip: Use clear names like "Full Grooming", "Basic Bath", or "Nail Trim". Keep descriptions short and helpful.</p>
+            </div>
+            
+            <div class="form-group checkbox-group">
+                {{ form_widget(form.isActive) }}
+                <label>{{ form_label(form.isActive) }}</label>
+                {{ form_errors(form.isActive) }}
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <span class="btn-icon">💾</span>
+                    <span class="btn-text">Create Service</span>
+                </button>
+            </div>
+        {{ form_end(form) }}
+        
+        <div class="back-link-container">
+            <a href="{{ path('app_admin') }}" class="back-link">
+                <span class="back-icon">←</span>
+                Back to Admin Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

@@ -1,0 +1,268 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Shopping Cart - FRTZ PawCare{% endblock %}
+
+{% block body %}
+<div class="page-hero">
+    <div class="hero-content">
+        <h1 class="hero-title">Shopping Cart</h1>
+        <p class="hero-subtitle">Review your selected pet products</p>
+        <div class="hero-decoration">🛒</div>
+    </div>
+</div>
+
+<div class="cart-container">
+    {% if cartItems|length > 0 %}
+        <div class="cart-grid">
+            <div class="cart-items">
+                <div class="cart-header">
+                    <h2>Your Items ({{ cartItems|length }} {{ cartItems|length == 1 ? 'item' : 'items' }})</h2>
+                    <button class="btn btn-outline btn-sm" onclick="clearCart()">
+                        <span class="btn-icon">🗑️</span>
+                        <span class="btn-text">Clear Cart</span>
+                    </button>
+                </div>
+
+                {% for item in cartItems %}
+                    <div class="cart-item" data-product-id="{{ item.product.id }}">
+                        <div class="item-image">
+                            {% if item.product.image %}
+                                <img src="{{ item.product.image }}" alt="{{ item.product.name }}" class="product-image">
+                            {% else %}
+                                <div class="no-image">
+                                    {% if item.product.petType == 'dog' %}
+                                        🐕
+                                    {% elseif item.product.petType == 'cat' %}
+                                        🐱
+                                    {% elseif item.product.petType == 'bird' %}
+                                        🐦
+                                    {% elseif item.product.petType == 'fish' %}
+                                        🐠
+                                    {% else %}
+                                        🐾
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="item-details">
+                            <h3 class="item-name">{{ item.product.name }}</h3>
+                            <p class="item-category">{{ item.product.category|title }} • {{ item.product.petType|title }}</p>
+                            <p class="item-price">${{ item.product.price }}</p>
+                            
+                            <div class="item-stock">
+                                {% if item.product.stock > 0 %}
+                                    <span class="in-stock">✅ In Stock ({{ item.product.stock }} available)</span>
+                                {% else %}
+                                    <span class="out-of-stock">❌ Out of Stock</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="item-quantity">
+                            <label for="quantity-{{ item.product.id }}">Quantity:</label>
+                            <div class="quantity-controls">
+                                <button class="quantity-btn" onclick="updateQuantity({{ item.product.id }}, {{ item.quantity - 1 }})" 
+                                        {% if item.quantity <= 1 %}disabled{% endif %}>-</button>
+                                <input type="number" 
+                                       id="quantity-{{ item.product.id }}" 
+                                       value="{{ item.quantity }}" 
+                                       min="1" 
+                                       max="{{ item.product.stock }}"
+                                       onchange="updateQuantity({{ item.product.id }}, this.value)">
+                                <button class="quantity-btn" onclick="updateQuantity({{ item.product.id }}, {{ item.quantity + 1 }})"
+                                        {% if item.quantity >= item.product.stock %}disabled{% endif %}>+</button>
+                            </div>
+                        </div>
+
+                        <div class="item-subtotal">
+                            <span class="subtotal-label">Subtotal:</span>
+                            <span class="subtotal-amount">${{ "%.2f"|format(item.subtotal) }}</span>
+                        </div>
+
+                        <div class="item-actions">
+                            <button class="btn btn-danger btn-sm" onclick="removeFromCart({{ item.product.id }})">
+                                <span class="btn-icon">🗑️</span>
+                                <span class="btn-text">Remove</span>
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="cart-summary">
+                <div class="summary-card">
+                    <h3>Order Summary</h3>
+                    
+                    <div class="summary-line">
+                        <span>Items ({{ cartItems|length }}):</span>
+                        <span>₱{{ "%.2f"|format(total) }}</span>
+                    </div>
+                    
+                    <div class="summary-line">
+                        <span>Shipping:</span>
+                        <span class="free-shipping">FREE</span>
+                    </div>
+                    
+                    <div class="summary-line">
+                        <span>Tax:</span>
+                        <span>₱{{ "%.2f"|format(total * 0.08) }}</span>
+                    </div>
+                    
+                    <div class="summary-divider"></div>
+                    
+                    <div class="summary-line total">
+                        <span>Total:</span>
+                        <span>₱{{ "%.2f"|format(total * 1.08) }}</span>
+                    </div>
+
+                    <div class="checkout-actions">
+                        <button class="btn btn-primary btn-large" onclick="proceedToCheckout()">
+                            <span class="btn-icon">💳</span>
+                            <span class="btn-text">Proceed to Checkout</span>
+                        </button>
+                        
+                        <a href="{{ path('app_shop') }}" class="btn btn-outline btn-large">
+                            <span class="btn-icon">🛍️</span>
+                            <span class="btn-text">Continue Shopping</span>
+                        </a>
+                    </div>
+
+                    <div class="shipping-info">
+                        <h4>🚚 Free Shipping</h4>
+                        <p>Free shipping on all orders over $50. Your order qualifies for free shipping!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="empty-cart">
+            <div class="empty-cart-icon">🛒</div>
+            <h2>Your cart is empty</h2>
+            <p>Looks like you haven't added any products to your cart yet.</p>
+            <a href="{{ path('app_shop') }}" class="btn btn-primary">
+                <span class="btn-icon">🛍️</span>
+                <span class="btn-text">Start Shopping</span>
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+// Cart management functions
+function updateQuantity(productId, quantity) {
+    if (quantity < 1) {
+        removeFromCart(productId);
+        return;
+    }
+
+    fetch(`/cart/update/${productId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: `quantity=${quantity}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            updateCartUI();
+            updateCartCount();
+        } else {
+            alert('Error updating cart: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error updating cart');
+    });
+}
+
+function removeFromCart(productId) {
+    if (confirm('Are you sure you want to remove this item from your cart?')) {
+        fetch(`/cart/remove/${productId}`, {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.querySelector(`[data-product-id="${productId}"]`).remove();
+                updateCartUI();
+                updateCartCount();
+                
+                // If cart is empty, reload page to show empty state
+                if (data.cartCount === 0) {
+                    location.reload();
+                }
+            } else {
+                alert('Error removing item: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error removing item');
+        });
+    }
+}
+
+function clearCart() {
+    if (confirm('Are you sure you want to clear your entire cart?')) {
+        fetch('/cart/clear', {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Error clearing cart: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error clearing cart');
+        });
+    }
+}
+
+function proceedToCheckout() {
+    fetch('/cart/checkout', {
+        method: 'POST',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success && data.redirect) {
+            window.location = data.redirect;
+        } else {
+            alert(data.message || 'Checkout failed.');
+        }
+    })
+    .catch(() => alert('Checkout failed.'));
+}
+
+function updateCartUI() {
+    // Recalculate totals and update display
+    location.reload(); // Simple approach - in a real app, you'd update the DOM dynamically
+}
+
+function updateCartCount() {
+    fetch('/cart/count')
+    .then(response => response.json())
+    .then(data => {
+        const cartCount = document.querySelector('.cart-count');
+        if (cartCount) {
+            cartCount.textContent = data.count;
+            cartCount.style.display = data.count > 0 ? 'inline' : 'none';
+        }
+    });
+}
+</script>
+{% endblock %}

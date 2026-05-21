@@ -1,0 +1,129 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Appointments - FRTZ PawCare{% endblock %}
+
+{% block body %}
+<div class="page-hero">
+    <div class="hero-content">
+        <h1 class="hero-title">Your Pet's Appointments</h1>
+        <p class="hero-subtitle">Manage and track your pet's veterinary visits</p>
+        <div class="hero-decoration">🐾</div>
+    </div>
+</div>
+
+<div class="appointments-container">
+    <div class="appointments-header">
+        <div class="header-content">
+            <h2>Upcoming & Past Appointments </h2>
+            <p> Keep track of all your pet's veterinary visits</p>
+        </div>
+        {% if app.user %}
+            <a href="{{ path('app_appointment_new') }}" class="btn btn-primary new-appointment-btn">
+                <span class="btn-icon">+</span>
+                <span class="btn-text">Book New Appointment</span>
+            </a>
+        {% else %}
+            <a href="{{ path('app_login') }}" class="btn btn-primary new-appointment-btn">
+                <span class="btn-text">Login to Book</span>
+            </a>
+        {% endif %}
+    </div>
+
+    <div class="appointments-grid">
+        {% for appointment in appointments %}
+            <div class="appointment-card" data-aos="fade-up" data-aos-delay="{{ loop.index * 100 }}">
+                <div class="card-header">
+                    <div class="pet-info">
+                        <h3>{{ appointment.Name }}</h3>
+                        <span class="pet-emoji">
+                            {% if appointment.PetType == 'dog' %}
+                                🐕
+                            {% elseif appointment.PetType == 'cat' %}
+                                🐱
+                            {% else %}
+                                🐾
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="appointment-id">#{{ appointment.id }}</div>
+                </div>
+                
+                <div class="card-body">
+                    <div class="appointment-details">
+                        <div class="detail-item">
+                            <span class="detail-icon">
+                                {% if appointment.PetType == 'dog' %}
+                                    🐕
+                                {% elseif appointment.PetType == 'cat' %}
+                                    🐱
+                                {% else %}
+                                    🐾
+                                {% endif %}
+                            </span>
+                            <div class="detail-content">
+                                <span class="detail-label">Pet Type</span>
+                                <span class="detail-value">
+                                    {% if appointment.PetType == 'dog' %}
+                                        Dog 🐕
+                                    {% elseif appointment.PetType == 'cat' %}
+                                        Cat 🐱
+                                    {% else %}
+                                        {{ appointment.PetType|title }}
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <span class="detail-icon">📅</span>
+                            <div class="detail-content">
+                                <span class="detail-label">Date & Time</span>
+                                <span class="detail-value">
+                                    {% if appointment.AppointmentDate %}
+                                        {{ appointment.AppointmentDate|date('M d, Y') }}
+                                        <br>
+                                        <small>{{ appointment.AppointmentDate|date('g:i A') }}</small>
+                                    {% else %}
+                                        <em>Not scheduled</em>
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-actions">
+                    <a href="{{ path('app_appointment_show', {'id': appointment.id}) }}" class="btn btn-outline">
+                        <span class="btn-icon">👁️</span>
+                        View Details
+                    </a>
+                </div>
+                
+                <div class="card-status">
+                    {% if appointment.AppointmentDate and appointment.AppointmentDate > date() %}
+                        <span class="status-badge status-upcoming">Upcoming</span>
+                    {% elseif appointment.AppointmentDate and appointment.AppointmentDate <= date() %}
+                        <span class="status-badge status-completed">Completed</span>
+                    {% else %}
+                        <span class="status-badge status-pending">Pending</span>
+                    {% endif %}
+                </div>
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">🐾</div>
+                <h3>No Appointments Yet</h3>
+                <p>Your pet deserves the best care. Book your first appointment today!</p>
+                {% if app.user %}
+                    <a href="{{ path('app_appointment_new') }}" class="btn btn-primary">
+                        <span class="btn-icon">+</span>
+                        <span class="btn-text">Book First Appointment</span>
+                    </a>
+                {% else %}
+                    <a href="{{ path('app_login') }}" class="btn btn-primary">Login to Book</a>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

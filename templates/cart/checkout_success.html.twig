@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Order Placed - FRTZ PawCare{% endblock %}
+
+{% block body %}
+<div class="page-hero">
+    <div class="hero-content">
+        <h1 class="hero-title">Thank you for your purchase!</h1>
+        <p class="hero-subtitle">Your order has been placed successfully.</p>
+        <div class="hero-decoration">🎉</div>
+    </div>
+</div>
+
+<div class="product-detail-container">
+    <div class="summary-card">
+        <h3>Order {{ summary.orderNumber ?? '—' }}</h3>
+        <div class="summary-divider"></div>
+        {% if summary.items is defined %}
+        {% for item in summary.items %}
+            <div class="summary-line">
+                <span>{{ item.name }} × {{ item.quantity }}</span>
+            <span>₱{{ '%.2f'|format(item.subtotal) }}</span>
+            </div>
+        {% endfor %}
+        {% else %}
+            {% for item in app.user is not defined ? [] : [] %}{% endfor %}
+        {% endif %}
+        <div class="summary-divider"></div>
+        <div class="summary-line">
+            <span>Subtotal</span>
+            <span>₱{{ '%.2f'|format(summary.total) }}</span>
+        </div>
+        <div class="summary-line">
+            <span>Tax</span>
+            <span>₱{{ '%.2f'|format(summary.tax) }}</span>
+        </div>
+        <div class="summary-line total">
+            <span>Grand Total</span>
+            <span>₱{{ '%.2f'|format(summary.grandTotal) }}</span>
+        </div>
+        <div class="checkout-actions" style="margin-top:20px;">
+            <a href="{{ path('app_shop') }}" class="btn btn-primary">Continue Shopping</a>
+            <a href="{{ path('app_cart') }}" class="btn btn-outline">View Cart</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

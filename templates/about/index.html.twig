@@ -1,0 +1,141 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}About FRTZ PawCare{% endblock %}
+
+{% block body %}
+    <!-- 1) Hero -->
+    <section class="page-hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Hospitality, with every paw.</h1>
+            <p class="hero-subtitle">
+                FRTZ PawCare is built for pet parents and pets who deserve kindness, consistency, and care that feels personal.
+            </p>
+            <div class="hero-decoration">🐾</div>
+        </div>
+    </section>
+
+    <!-- 2) Our story -->
+    <section class="content" id="our-story">
+        <h2>Why we started</h2>
+        <div class="metrics-grid">
+            <div class="info-card">
+                <h3>✨ A warm welcome</h3>
+                <ul>
+                    <li>We greet every pet like a friend.</li>
+                    <li>We treat every visit with patience and respect.</li>
+                    <li>We communicate clearly, so you feel confident.</li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h3>❤️ Care you can feel</h3>
+                <ul>
+                    <li>Thoughtful grooming and clean, gentle handling.</li>
+                    <li>Quality pet food choices for everyday health.</li>
+                    <li>Small details that make a big difference.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Meet the Team -->
+    <section class="content" id="meet-the-team">
+        <h2>Meet the team</h2>
+        <p class="about-team-intro">
+            The people behind PawCare—here to welcome you, answer questions, and care for every pet like family.
+        </p>
+        <div class="metrics-grid">
+            <div class="info-card">
+                <h3>🌟 Maria Santos</h3>
+                <p><strong>Founder &amp; Head of Hospitality</strong></p>
+                <p>Leads our guest experience and makes sure every visit feels calm and personal.</p>
+            </div>
+            <div class="info-card">
+                <h3>✂️ James Rivera</h3>
+                <p><strong>Lead Grooming Specialist</strong></p>
+                <p>Trained in gentle handling and breed-specific styling with a spa-day touch.</p>
+            </div>
+            <div class="info-card">
+                <h3>🍽️ Priya Nair</h3>
+                <p><strong>Nutrition &amp; Retail Lead</strong></p>
+                <p>Helps pet parents choose food and products that fit each pet’s lifestyle.</p>
+            </div>
+            <div class="info-card">
+                <h3>📋 Alex Kim</h3>
+                <p><strong>Client Care Coordinator</strong></p>
+                <p>Books appointments, follows up with families, and keeps communication crystal clear.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3) Hospitality values -->
+    <section class="content" id="values">
+        <h2>Our values (the PawCare way)</h2>
+        <div class="services">
+            <div class="service">
+                <h3>🫶 Kindness first</h3>
+                <p>We keep sessions calm and comfortable for pets with different personalities.</p>
+            </div>
+            <div class="service">
+                <h3>🔒 Trust & safety</h3>
+                <p>We focus on hygiene, gentle routines, and safe handling throughout every visit.</p>
+            </div>
+            <div class="service">
+                <h3>🎯 Consistency</h3>
+                <p>Reliable service—from shop favorites to appointment bookings.</p>
+            </div>
+            <div class="service">
+                <h3>📣 Honest communication</h3>
+                <p>You’ll always know what’s happening and what comes next.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4) What you can expect -->
+    <section class="content" id="experience">
+        <h2>Your pet’s experience</h2>
+        <div class="metrics-grid">
+            <div class="info-card">
+                <h3>🧼 Clean & cozy</h3>
+                <ul>
+                    <li>Grooming focused on comfort and cleanliness.</li>
+                    <li>Soft pacing so pets feel at ease.</li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h3>🍽️ Nourish every day</h3>
+                <ul>
+                    <li>Food options selected to support healthy routines.</li>
+                    <li>Guidance for pet parents who want what’s best.</li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h3>📅 Smooth booking</h3>
+                <ul>
+                    <li>Appointments you can manage easily.</li>
+                    <li>Clear updates so you’re never left wondering.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5) CTA -->
+    <section class="content" id="join-us">
+        <h2>Come be part of PawCare</h2>
+        <div class="appointment-card">
+            <div class="card-header">
+                <h2>Shop, book, and feel the hospitality</h2>
+                <p>Food you’ll love. Grooming that feels like a spa day.</p>
+            </div>
+            <div class="card-actions">
+                <a href="{{ path('app_shop') }}" class="btn btn-primary btn-large">
+                    <span class="btn-icon">🛍️</span>
+                    <span class="btn-text">Shop Pet Food</span>
+                </a>
+                <a href="{{ path('app_appointment_index') }}" class="btn btn-outline btn-large">
+                    <span class="btn-icon">📅</span>
+                    <span class="btn-text">Book Grooming</span>
+                </a>
+            </div>
+        </div>
+    </section>
+{% endblock %}

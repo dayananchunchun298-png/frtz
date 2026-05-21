@@ -1,0 +1,76 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        INSTALL_DEV_DEPS: "1"
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8000}:8000"
+    environment:
+      APP_ENV: "${APP_ENV:-dev}"
+      APP_DEBUG: "${APP_DEBUG:-1}"
+      APP_URL: "${APP_URL:-http://127.0.0.1:8000}"
+      DEFAULT_URI: "${APP_URL:-http://127.0.0.1:8000}"
+      DATABASE_URL: "mysql://${MYSQL_USER:-FRTZPAWS}:${MYSQL_PASSWORD:-121212}@mysql:3306/${MYSQL_DATABASE:-my}?serverVersion=8.0&charset=utf8mb4"
+      PORT: "8000"
+      # PHP-FPM crashes on Docker Desktop (Windows); use built-in server + nginx proxy
+      PHP_RUNTIME: "builtin"
+    env_file:
+      - .env
+    volumes:
+      - ./.env:/app/.env:ro
+      - ./src:/app/src:ro
+      - ./templates:/app/templates:ro
+      - ./public:/app/public
+      - app_var:/app/var
+      - jwt_keys:/app/config/jwt
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - mynetwork
+
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-121212}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-121212}"
+      MYSQL_DATABASE: "${MYSQL_DATABASE:-my}"
+      MYSQL_USER: "${MYSQL_USER:-FRTZPAWS}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD:-121212}"
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - mynetwork
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: "${MYSQL_USER:-FRTZPAWS}"
+      PMA_PASSWORD: "${MYSQL_PASSWORD:-121212}"
+    ports:
+      - "${PMA_PORT:-8080}:80"
+    depends_on:
+      - mysql
+    networks:
+      - mynetwork
+
+volumes:
+  mysql_data:
+  app_var:
+  jwt_keys:
+
+networks:
+  mynetwork:
+    driver: bridge

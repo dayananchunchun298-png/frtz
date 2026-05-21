@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Staff Dashboard - FRTZ PawCare{% endblock %}
+
+{% block body %}
+<div class="page-hero">
+    <div class="hero-content">
+        <h1 class="hero-title">Staff workspace</h1>
+        <p class="hero-subtitle">Recent appointments at a glance</p>
+        <div class="hero-decoration">👋</div>
+    </div>
+</div>
+
+<div class="appointments-container">
+    <div class="appointments-header">
+        <div class="header-content">
+            <h2>Upcoming & recent bookings</h2>
+            <p>For full CRUD, admins use the Admin dashboard.</p>
+        </div>
+        <div class="auth-links">
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('app_admin') }}" class="btn btn-outline new-appointment-btn">
+                    <span class="btn-icon">🛠️</span>
+                    <span class="btn-text">Open Admin</span>
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="appointments-grid">
+        {% for a in appointments %}
+            <div class="appointment-card">
+                <div class="card-header">
+                    <h2>
+                        <span class="btn-icon">📅</span>
+                        {{ a.name }}
+                    </h2>
+                    <p>{{ a.petType|title }} appointment</p>
+                </div>
+
+                <div class="card-body">
+                    <p class="detail-value">
+                        {{ a.appointmentDate|date('M j, Y g:i A') }}
+                    </p>
+                    <div class="detail-item" style="margin-top: 14px;">
+                        <span class="detail-label">Status</span>
+                        <span class="detail-value">Booked</span>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">📅</div>
+                <h3>No appointments yet</h3>
+                <p>When customers book, they will appear here.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

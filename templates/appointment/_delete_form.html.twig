@@ -1,0 +1,7 @@
+<form method="post" action="{{ path('app_appointment_delete', {'id': appointment.id}) }}" onsubmit="return confirm('⚠️ WARNING: This will permanently delete the appointment for {{ appointment.Name }}. This action cannot be undone. Are you sure you want to continue?');" class="delete-form">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ appointment.id) }}">
+    <button type="submit" class="btn btn-danger delete-btn">
+        <span class="btn-icon">🗑️</span>
+        <span class="btn-text">Delete Appointment</span>
+    </button>
+</form>

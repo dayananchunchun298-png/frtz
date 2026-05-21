@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Resend verification{% endblock %}
+
+{% block body %}
+    <div class="page-hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Verify your email</h1>
+            <p class="hero-subtitle">Resend the verification link</p>
+            <div class="hero-decoration">📩</div>
+        </div>
+    </div>
+
+    <div class="auth-page-container">
+        <div class="appointment-card auth-card">
+            <div class="card-header">
+                <h2>Resend verification</h2>
+                <p>So you can log in right after verifying</p>
+            </div>
+
+            <div class="card-body">
+                {{ form_start(resendForm, { 'attr': { 'class': 'auth-form' } }) }}
+                    <div class="form-group">
+                        {{ form_label(resendForm.email, 'Email', { 'label_attr': { 'class': 'form-label' } }) }}
+                        {{ form_widget(resendForm.email, { 'attr': { 'class': 'form-input', 'placeholder': 'you@example.com', 'autocomplete': 'email' } }) }}
+                        {{ form_errors(resendForm.email) }}
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="btn btn-primary btn-large" type="submit">
+                            <span class="btn-icon">📨</span>
+                            <span class="btn-text">Send link</span>
+                        </button>
+                    </div>
+
+                    {{ form_row(resendForm._token) }}
+                {{ form_end(resendForm, { render_rest: false }) }}
+
+                <div class="auth-links">
+                    <a href="{{ path('app_login') }}" class="btn btn-outline btn-large">
+                        <span class="btn-icon">←</span>
+                        <span class="btn-text">Back to login</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

@@ -7,5 +7,5 @@ framework:
     csrf_protection:
         stateless_token_ids:
             - submit
-            - authenticate
             - logout
+            # "authenticate" uses a real server-rendered token on /login (no JS required).

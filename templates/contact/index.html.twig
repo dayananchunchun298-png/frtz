@@ -1,0 +1,164 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contact Us - FRTZ PawCare{% endblock %}
+
+{% block body %}
+<div class="page-hero">
+    <div class="hero-content">
+        <h1 class="hero-title">Contact Us</h1>
+        <p class="hero-subtitle">Get in touch with our veterinary care team</p>
+        <div class="hero-decoration">📞</div>
+    </div>
+</div>
+
+<div class="contact-page-container">
+    <div class="contact-main-grid">
+        <!-- Contact Information Card -->
+        <div class="contact-info-card">
+            <div class="card-header">
+                <h2>Get In Touch</h2>
+                <p>We're here to help with all your pet care needs. Reach out to us through any of the following ways:</p>
+            </div>
+            
+            <div class="contact-methods">
+                <div class="contact-method">
+                    <div class="method-icon">📞</div>
+                    <div class="method-content">
+                        <h3>Phone</h3>
+                        <p><a href="tel:09267263979">09267263979</a></p>
+                        <small>Available Monday - Friday: 8:00 AM - 6:00 PM<br>Saturday: 9:00 AM - 4:00 PM</small>
+                    </div>
+                </div>
+                
+                <div class="contact-method">
+                    <div class="method-icon">📧</div>
+                    <div class="method-content">
+                        <h3>Email</h3>
+                        <p><a href="mailto:dayananchunchun298@gmail.com">dayananchunchun298@gmail.com</a></p>
+                        <small>We'll respond within 24 hours</small>
+                    </div>
+                </div>
+                
+                <div class="contact-method">
+                    <div class="method-icon">📍</div>
+                    <div class="method-content">
+                        <h3>Location</h3>
+                        <p>123 Pet Care Lane<br>Veterinary City, VC 12345</p>
+                        <small>Free parking available on-site</small>
+                    </div>
+                </div>
+                
+                <div class="contact-method">
+                    <div class="method-icon">🚨</div>
+                    <div class="method-content">
+                        <h3>Emergency</h3>
+                        <p><a href="tel:555911PETS">(555) 911-PETS</a></p>
+                        <small>24/7 emergency veterinary care</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Contact Form Card -->
+        <div class="contact-form-card">
+            <div class="card-header">
+                <h2>Send Us a Message</h2>
+                <p>Have a question or need to schedule an appointment? Fill out the form below and we'll get back to you as soon as possible.</p>
+            </div>
+            
+            <div class="contact-form">
+                {% if contactFormEmbedUrl %}
+                    {% if 'forms.gle/' in contactFormEmbedUrl %}
+                        <p class="contact-form-intro">
+                            Your Google Form short link cannot be embedded directly. Open it in a new tab to submit your message.
+                        </p>
+                    {% else %}
+                        <div class="contact-form-embed-wrap">
+                            <iframe
+                                class="contact-form-iframe"
+                                title="Contact form"
+                                src="{{ contactFormEmbedUrl }}"
+                                loading="lazy"
+                                referrerpolicy="no-referrer-when-downgrade"
+                            ></iframe>
+                        </div>
+                    {% endif %}
+                    <div class="card-actions" style="padding: 0 0 18px 0; border-top: none;">
+                        <a
+                            href="https://forms.gle/JXs4YEPMkGCkfbAj8"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="btn btn-primary"
+                        >
+                            <span class="btn-icon">📨</span>
+                            <span class="btn-text">Open Google Form</span>
+                        </a>
+                    </div>
+                    {% if 'forms.gle/' not in contactFormEmbedUrl %}
+                        <p class="contact-form-footnote">
+                            After you submit, you will see the confirmation inside the form.
+                        </p>
+                    {% endif %}
+                {% else %}
+                    <p class="contact-form-intro">
+                        Use this built-in contact form for now. You can still switch to Brevo/Google embed later by setting
+                        <code>CONTACT_FORM_EMBED_URL</code> in your <code>.env</code>.
+                    </p>
+
+                    <div class="card-actions" style="padding: 0 0 18px 0; border-top: none;">
+                        <a
+                            href="https://forms.gle/JXs4YEPMkGCkfbAj8"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="btn btn-primary"
+                        >
+                            <span class="btn-icon">📨</span>
+                            <span class="btn-text">Open Google Form</span>
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Additional Information Cards -->
+    <div class="contact-info-cards">
+        <div class="info-card">
+            <h3>🕒 Office Hours</h3>
+            <div class="hours-list">
+                <div class="hours-item">
+                    <span class="day">Monday - Friday</span>
+                    <span class="time">8:00 AM - 6:00 PM</span>
+                </div>
+                <div class="hours-item">
+                    <span class="day">Saturday</span>
+                    <span class="time">9:00 AM - 4:00 PM</span>
+                </div>
+                <div class="hours-item">
+                    <span class="day">Sunday</span>
+                    <span class="time">Closed</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="info-card">
+            <h3>🚗 Directions</h3>
+            <p>We're conveniently located in the heart of Veterinary City. Free parking is available on-site, and we're easily accessible by public transportation.</p>
+            <a href="#" class="btn btn-outline">
+                <span class="btn-icon">🗺️</span>
+                <span class="btn-text">Get Directions</span>
+            </a>
+        </div>
+        
+        <div class="info-card">
+            <h3>💡 Quick Tips</h3>
+            <ul>
+                <li>Bring your pet's vaccination records</li>
+                <li>Arrive 10 minutes early for appointments</li>
+                <li>Call ahead for emergency situations</li>
+                <li>We accept most pet insurance plans</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

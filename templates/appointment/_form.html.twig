@@ -1,0 +1,54 @@
+<div class="appointment-form-container">
+    {{ form_start(form, {'attr': {'class': 'appointment-form', 'novalidate': 'novalidate'}}) }}
+    
+    <div class="form-group">
+        {{ form_label(form.Name, 'Pet Name', {'label_attr': {'class': 'form-label'}}) }}
+        {{ form_widget(form.Name, {'attr': {
+            'class': 'form-input',
+            'placeholder': 'Enter your pet\'s name',
+            'required': 'required'
+        }}) }}
+        {{ form_errors(form.Name) }}
+    </div>
+
+    <div class="form-group pet-type-group">
+        <label class="form-label">Choose Your Pet Type</label>
+        <div class="pet-type-selector">
+            <div class="pet-option">
+                <input type="radio" id="pet_type_dog" name="{{ form.PetType.vars.full_name }}" value="dog" class="pet-radio" {{ form.PetType.vars.value == 'dog' ? 'checked' : '' }}>
+                <label for="pet_type_dog" class="pet-label">
+                    <div class="pet-icon">🐕</div>
+                    <span>Dog 🐕</span>
+                </label>
+            </div>
+            <div class="pet-option">
+                <input type="radio" id="pet_type_cat" name="{{ form.PetType.vars.full_name }}" value="cat" class="pet-radio" {{ form.PetType.vars.value == 'cat' ? 'checked' : '' }}>
+                <label for="pet_type_cat" class="pet-label">
+                    <div class="pet-icon">🐱</div>
+                    <span>Cat 🐱</span>
+                </label>
+            </div>
+        </div>
+        {{ form_errors(form.PetType) }}
+    </div>
+
+    <div class="form-group">
+        {{ form_label(form.AppointmentDate, 'Appointment Date & Time', {'label_attr': {'class': 'form-label'}}) }}
+        {{ form_widget(form.AppointmentDate, {'attr': {
+            'class': 'form-input datetime-input',
+            'required': 'required'
+        }}) }}
+        {{ form_errors(form.AppointmentDate) }}
+    </div>
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary appointment-btn">
+            <span class="btn-text">{{ button_label|default('Book Appointment') }}</span>
+            <span class="btn-icon">🐾</span>
+        </button>
+    </div>
+
+    {# Ensure CSRF token is included but prevent Symfony from auto-rendering unrendered fields #}
+    {{ form_row(form._token) }}
+    {{ form_end(form, { render_rest: false }) }}
+</div>

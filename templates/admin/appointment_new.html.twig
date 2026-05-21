@@ -1,0 +1,52 @@
+{% extends 'admin/base_admin.html.twig' %}
+
+{% block title %}Create New Appointment - Admin - FRTZ PawCare{% endblock %}
+
+{% block body %}
+<div class="page-hero">
+    <div class="hero-content">
+        <h1 class="hero-title">Create New Appointment</h1>
+        <p class="hero-subtitle">Add a new pet appointment to the system</p>
+        <div class="hero-decoration">🔧</div>
+    </div>
+</div>
+
+<div class="appointment-page-container">
+    <div class="appointment-card">
+        <div class="card-header">
+            <h2>Appointment Details</h2>
+            <p>Fill in the details below to create a new appointment</p>
+        </div>
+        
+        {{ include('appointment/_form.html.twig') }}
+        
+        <div class="back-link-container">
+            <a href="{{ path('app_admin') }}" class="back-link">
+                <span class="back-icon">←</span>
+                Back to Admin Dashboard
+            </a>
+        </div>
+    </div>
+    
+    <div class="appointment-info">
+        <div class="info-card">
+            <h3>📅 What to Expect</h3>
+            <ul>
+                <li>Comprehensive health check</li>
+                <li>Vaccination updates</li>
+                <li>Nutritional consultation</li>
+                <li>Grooming recommendations</li>
+            </ul>
+        </div>
+        
+        <div class="info-card">
+            <h3>⏰ Available Hours</h3>
+            <div class="hours-info">
+                <p><strong>Monday - Friday:</strong> 8:00 AM - 6:00 PM</p>
+                <p><strong>Saturday:</strong> 9:00 AM - 4:00 PM</p>
+                <p><strong>Sunday:</strong> Closed</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

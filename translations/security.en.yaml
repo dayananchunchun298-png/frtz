@@ -1,0 +1,8 @@
+# Shown on /login when authentication fails
+'Invalid credentials.': 'Wrong email or password. Please try again.'
+'Invalid credentials': 'Wrong email or password. Please try again.'
+'The presented password is invalid.': 'Wrong email or password. Please try again.'
+'The presented password is invalid': 'Wrong email or password. Please try again.'
+'Account is disabled.': 'This account is disabled. Contact support if you need help.'
+'Account is locked.': 'This account is temporarily locked. Try again later.'
+'An authentication exception occurred.': 'We could not sign you in. Please try again.'

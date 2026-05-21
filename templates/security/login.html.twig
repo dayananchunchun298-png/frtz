@@ -1,0 +1,93 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Log in{% endblock %}
+
+{% block body %}
+    <div class="page-hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Welcome back</h1>
+            <p class="hero-subtitle">Log in to manage appointments and shop</p>
+            <div class="hero-decoration">🐾</div>
+        </div>
+    </div>
+
+    <div class="auth-page-container">
+        <div class="appointment-card auth-card">
+            <div class="card-header">
+                <h2>Log in</h2>
+                <p>Your email + password combo</p>
+            </div>
+
+            <div class="card-body">
+                {% if error_message %}
+                    <div class="login-error-banner" role="alert">
+                        <strong>Could not log in</strong>
+                        <p>{{ error_message }}</p>
+                    </div>
+                {% endif %}
+
+                <form method="post" action="{{ path('app_login') }}" class="auth-form">
+                    <div class="form-group">
+                        <label class="form-label" for="inputEmail">Email</label>
+                        <input
+                            type="email"
+                            value="{{ last_username }}"
+                            name="email"
+                            id="inputEmail"
+                            autocomplete="email"
+                            required
+                            autofocus
+                            class="form-input"
+                            placeholder="you@example.com"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="inputPassword">Password</label>
+                        <input
+                            type="password"
+                            name="password"
+                            id="inputPassword"
+                            autocomplete="current-password"
+                            required
+                            class="form-input"
+                            placeholder="••••••••"
+                        >
+                    </div>
+
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                    <div class="form-actions">
+                        <button class="btn btn-primary btn-large" type="submit">
+                            <span class="btn-icon">🐾</span>
+                            <span class="btn-text">Log in</span>
+                        </button>
+                    </div>
+                </form>
+
+                <div class="staff-oauth-divider">
+                    <span>Staff</span>
+                </div>
+                <p class="staff-oauth-hint">Sign in with Google (verified automatically).</p>
+                <div class="form-actions">
+                    <a href="{{ path('app_google_connect') }}" class="btn btn-secondary btn-large">
+                        <span class="btn-icon">🔐</span>
+                        <span class="btn-text">Continue with Google (Staff)</span>
+                    </a>
+                </div>
+
+                <div class="auth-links">
+                    <a href="{{ path('app_register') }}" class="btn btn-outline btn-large">
+                        <span class="btn-icon">✨</span>
+                        <span class="btn-text">Create account</span>
+                    </a>
+                    <a href="{{ path('app_resend_verification') }}" class="btn btn-secondary btn-large">
+                        <span class="btn-icon">📩</span>
+                        <span class="btn-text">Resend verification email</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

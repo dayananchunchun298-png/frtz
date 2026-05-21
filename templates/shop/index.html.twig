@@ -1,0 +1,211 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Pet Shop - FRTZ PawCare{% endblock %}
+
+{% block body %}
+<div class="page-hero">
+    <div class="hero-content">
+        <h1 class="hero-title">Pet Shop</h1>
+        <p class="hero-subtitle">Premium products for your beloved pets</p>
+        <div class="hero-decoration">🛍️</div>
+    </div>
+</div>
+
+<div class="shop-container">
+    <div class="shop-filters">
+        <div class="filter-section">
+            <h3>Filter by Category</h3>
+            <div class="filter-buttons">
+                <a href="{{ path('app_shop') }}" class="filter-btn {{ currentCategory is null ? 'active' : '' }}">
+                    All Categories
+                </a>
+                {% for category in categories %}
+                    <a href="{{ path('app_shop', {'category': category}) }}" class="filter-btn {{ currentCategory == category ? 'active' : '' }}">
+                        {{ category|title }}
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="filter-section">
+            <h3>Filter by Pet Type</h3>
+            <div class="filter-buttons">
+                <a href="{{ path('app_shop') }}" class="filter-btn {{ currentPetType is null ? 'active' : '' }}">
+                    All Pets
+                </a>
+                {% for petType in petTypes %}
+                    <a href="{{ path('app_shop', {'pet_type': petType}) }}" class="filter-btn {{ currentPetType == petType ? 'active' : '' }}">
+                        {% if petType == 'dog' %}🥣 Dog Food
+                        {% elseif petType == 'cat' %}🥣 Cat Food
+                        {% elseif petType == 'bird' %}🥣 Bird Food
+                        {% elseif petType == 'fish' %}🥣 Fish Food
+                        {% elseif petType == 'small_pet' %}🥣 Small Pet Food
+                        {% else %}{{ petType|title }}
+                        {% endif %}
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="products-grid">
+        {% for product in products %}
+            <div class="product-card" data-aos="fade-up" data-aos-delay="{{ loop.index * 100 }}">
+                <div class="product-image">
+                    {% if product.image %}
+                        <img src="{{ product.image }}" alt="{{ product.name }}" loading="lazy">
+                    {% else %}
+                        <div class="no-image">
+                                {% if product.petType == 'dog' %}
+                                    🥩
+                                {% elseif product.petType == 'cat' %}
+                                    🐟
+                                {% elseif product.petType == 'bird' %}
+                                    🌾
+                                {% elseif product.petType == 'fish' %}
+                                    🐟
+                                {% elseif product.petType == 'small_pet' %}
+                                    🌰
+                                {% else %}
+                                    🥣
+                                {% endif %}
+                        </div>
+                    {% endif %}
+                    <div class="product-badges">
+                        <span class="category-badge">{{ product.category|title }}</span>
+                        {% if product.stock <= 5 %}
+                            <span class="stock-badge low-stock">Low Stock</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="product-info">
+                    <h3 class="product-name">{{ product.name }}</h3>
+                    <p class="product-description">{{ product.description|slice(0, 100) }}{% if product.description|length > 100 %}...{% endif %}</p>
+                    
+                    <div class="product-details">
+                        <div class="pet-type">
+                            {% if product.petType == 'dog' %}
+                                🥣 Dog Food
+                            {% elseif product.petType == 'cat' %}
+                                🥣 Cat Food
+                            {% elseif product.petType == 'bird' %}
+                                🥣 Bird Food
+                            {% elseif product.petType == 'fish' %}
+                                🥣 Fish Food
+                            {% elseif product.petType == 'small_pet' %}
+                                🥣 Small Pet Food
+                            {% else %}
+                                🥣 For All Pets
+                            {% endif %}
+                        </div>
+                        
+                        <div class="stock-info">
+                            {% if product.stock > 0 %}
+                                <span class="in-stock">✅ In Stock ({{ product.stock }})</span>
+                            {% else %}
+                                <span class="out-of-stock">❌ Out of Stock</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="product-price">
+                        <span class="price">₱{{ product.price }}</span>
+                    </div>
+                </div>
+                
+                <div class="product-actions">
+                    <a href="{{ path('app_shop_product_show', {'id': product.id}) }}" class="btn btn-outline">
+                        <span class="btn-icon">👁️</span>
+                        View Details
+                    </a>
+                    {% if product.stock > 0 %}
+                        <button class="btn btn-primary add-to-cart" data-product-id="{{ product.id }}" onclick="addToCart({{ product.id }})">
+                            <span class="btn-icon">🛒</span>
+                            Add to Cart
+                        </button>
+                    {% else %}
+                        <button class="btn btn-disabled" disabled>
+                            <span class="btn-icon">❌</span>
+                            Out of Stock
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">🛍️</div>
+                <h3>No Products Found</h3>
+                <p>We're working on adding more products. Check back soon!</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+// Add to cart functionality
+function addToCart(productId) {
+    fetch(`/cart/add/${productId}`, {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Show success message
+            showNotification('Product added to cart!', 'success');
+            updateCartCount();
+        } else {
+            showNotification('Error: ' + data.message, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Error adding product to cart', 'error');
+    });
+}
+
+function showNotification(message, type = 'success') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.innerHTML = `
+        <div class="notification-content">
+            <span class="notification-icon">${type === 'success' ? '✅' : '❌'}</span>
+            <span class="notification-text">${message}</span>
+        </div>
+    `;
+    
+    // Add to page
+    document.body.appendChild(notification);
+    
+    // Show notification
+    setTimeout(() => notification.classList.add('show'), 100);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+function updateCartCount() {
+    fetch('/cart/count')
+    .then(response => response.json())
+    .then(data => {
+        const cartCount = document.querySelector('.cart-count');
+        if (cartCount) {
+            cartCount.textContent = data.count;
+            cartCount.style.display = data.count > 0 ? 'inline' : 'none';
+        }
+    });
+}
+
+// Update cart count on page load
+document.addEventListener('DOMContentLoaded', function() {
+    updateCartCount();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Reschedule Appointment - FRTZ PawCare{% endblock %}
+
+{% block body %}
+<div class="page-hero">
+    <div class="hero-content">
+        <h1 class="hero-title">Reschedule Appointment</h1>
+        <p class="hero-subtitle">Update your pet's appointment details</p>
+        <div class="hero-decoration">📅</div>
+    </div>
+</div>
+
+<div class="appointment-page-container">
+    <div class="appointment-card">
+        <div class="card-header">
+            <h2>Reschedule Appointment Details</h2>
+            <p>Update your pet's appointment date and time below</p>
+        </div>
+        
+        {{ include('appointment/_form.html.twig', {'button_label': 'Reschedule Appointment'}) }}
+        
+        <div class="form-actions-secondary">
+            <a href="{{ path('app_appointment_index') }}" class="btn btn-outline">
+                <span class="btn-icon">←</span>
+                <span class="btn-text">Back to Appointments</span>
+            </a>
+            <a href="{{ path('app_appointment_show', {'id': appointment.id}) }}" class="btn btn-secondary">
+                <span class="btn-icon">👁️</span>
+                <span class="btn-text">View Details</span>
+            </a>
+        </div>
+        
+        <div class="danger-zone">
+            <h3>⚠️ Danger Zone</h3>
+            <p>Permanently delete this appointment. This action cannot be undone.</p>
+            {{ include('appointment/_delete_form.html.twig') }}
+        </div>
+    </div>
+    
+    <div class="appointment-info">
+        <div class="info-card">
+            <h3>📝 Rescheduling Tips</h3>
+            <ul>
+                <li>Choose a new date and time that works for you</li>
+                <li>Ensure you're available for the new appointment</li>
+                <li>Contact us if you need further assistance</li>
+                <li>Changes will be reflected immediately</li>
+            </ul>
+        </div>
+        
+        <div class="info-card">
+            <h3>📞 Need Help?</h3>
+            <div class="contact-info">
+                <p><strong>Phone:</strong> (555) 123-PAWS</p>
+                <p><strong>Email:</strong> care@fritzpawcare.com</p>
+                <p><strong>Hours:</strong> Mon-Fri 8AM-6PM</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

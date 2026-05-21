@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Book New Appointment - FRTZ PawCare{% endblock %}
+
+{% block body %}
+<div class="page-hero">
+    <div class="hero-content">
+        <h1 class="hero-title">Book Your Pet's Appointment</h1>
+        <p class="hero-subtitle">Schedule a visit with our experienced veterinary team</p>
+        <div class="hero-decoration">🐾</div>
+    </div>
+</div>
+
+<div class="appointment-page-container">
+    <div class="appointment-card">
+        <div class="card-header">
+            <h2>Appointment Details</h2>
+            <p>Fill in the details below to schedule your pet's appointment</p>
+        </div>
+        
+        {{ include('appointment/_form.html.twig') }}
+        
+        <div class="back-link-container">
+            <a href="{{ path('app_appointment_index') }}" class="back-link">
+                <span class="back-icon">←</span>
+                Back to Appointments
+            </a>
+        </div>
+    </div>
+    
+    <div class="appointment-info">
+        <div class="info-card">
+            <h3>📅 What to Expect</h3>
+            <ul>
+                <li>Comprehensive health check</li>
+                <li>Vaccination updates</li>
+                <li>Nutritional consultation</li>
+                <li>Grooming recommendations</li>
+            </ul>
+        </div>
+        
+        <div class="info-card">
+            <h3>⏰ Available Hours</h3>
+            <div class="hours-info">
+                <p><strong>Monday - Friday:</strong> 8:00 AM - 6:00 PM</p>
+                <p><strong>Saturday:</strong> 9:00 AM - 4:00 PM</p>
+                <p><strong>Sunday:</strong> Closed</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
