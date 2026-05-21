@@ -51,27 +51,33 @@ if [ -d config/jwt ]; then
     chmod -R ug+rwX config/jwt 2>/dev/null || true
 fi
 
+# Railway: listen on $PORT with a single PHP process (nginx+FPM background jobs often die after exec).
+if [ -n "${RAILWAY_PUBLIC_DOMAIN:-}" ] || [ -n "${RAILWAY_ENVIRONMENT:-}" ]; then
+    echo "Railway detected: starting PHP on 0.0.0.0:${PORT}..."
+    exec php -S "0.0.0.0:${PORT}" -t public public/index.php
+fi
+
 use_fpm=0
 if [ "$PHP_RUNTIME" = "fpm" ]; then
     use_fpm=1
 elif [ "$PHP_RUNTIME" = "builtin" ]; then
     use_fpm=0
 else
-    php-fpm --nodaemonize 2>/dev/null &
+    php-fpm 2>/dev/null || true
     sleep 2
     if ss -tln 2>/dev/null | grep -q ':9000'; then
         use_fpm=1
     else
-        kill %1 2>/dev/null || true
+        killall php-fpm 2>/dev/null || true
     fi
 fi
 
 if [ "$use_fpm" = "1" ]; then
     echo "Starting PHP-FPM..."
     if [ "$PHP_RUNTIME" != "fpm" ]; then
-        : # already started during auto-detect
+        : # already started during auto-detect (daemon mode)
     else
-        php-fpm --nodaemonize &
+        php-fpm
         sleep 2
     fi
     cp /etc/nginx/default-fpm.conf /etc/nginx/conf.d/default.conf
