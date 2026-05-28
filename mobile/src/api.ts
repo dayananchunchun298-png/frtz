@@ -2,20 +2,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const TOKEN_KEY = 'pawcare_jwt';
 
-/** Android emulator → host machine; iOS simulator / web → localhost */
-export const DEFAULT_API_URL = 'http://127.0.0.1:8000';
+/** Production Railway API (one-way; no localhost override). */
+export const API_BASE_URL = 'https://frtz-production.up.railway.app';
 
 export type ApiError = { code: string; message: string; violations?: { field: string; message: string }[] };
-
-let apiBaseUrl = DEFAULT_API_URL;
-
-export function setApiBaseUrl(url: string): void {
-  apiBaseUrl = url.replace(/\/$/, '');
-}
-
-export function getApiBaseUrl(): string {
-  return apiBaseUrl;
-}
 
 export async function getToken(): Promise<string | null> {
   return AsyncStorage.getItem(TOKEN_KEY);
@@ -47,7 +37,7 @@ export async function apiRequest<T>(
 
   let response: Response;
   try {
-    response = await fetch(`${apiBaseUrl}${path}`, {
+    response = await fetch(`${API_BASE_URL}${path}`, {
       method: options.method ?? 'GET',
       headers,
       body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
@@ -57,7 +47,7 @@ export async function apiRequest<T>(
       success: false,
       error: {
         code: 'network_error',
-        message: `Cannot reach API at ${apiBaseUrl}. Start Symfony and check the API URL in Profile.`,
+        message: `Cannot reach API at ${API_BASE_URL}. Check your internet connection.`,
       },
     };
   }
@@ -82,7 +72,7 @@ export async function apiRequest<T>(
 export async function login(email: string, password: string): Promise<{ ok: true } | { ok: false; error: ApiError }> {
   let response: Response;
   try {
-    response = await fetch(`${apiBaseUrl}/api/login`, {
+    response = await fetch(`${API_BASE_URL}/api/login`, {
       method: 'POST',
       headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
@@ -90,7 +80,7 @@ export async function login(email: string, password: string): Promise<{ ok: true
   } catch {
     return {
       ok: false,
-      error: { code: 'network_error', message: `Cannot reach API at ${apiBaseUrl}` },
+      error: { code: 'network_error', message: `Cannot reach API at ${API_BASE_URL}` },
     };
   }
 

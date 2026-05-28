@@ -2,11 +2,20 @@
 
 Expo (React Native) customer app for rubric criterion **#1 Mobile Integration** and **#5 Web/Mobile Sync**.
 
+## API
+
+All requests use the production Railway backend:
+
+**https://frtz-production.up.railway.app**
+
+Configured in `mobile/src/api.ts` as `API_BASE_URL`. There is no localhost override in the app.
+
+Web app (same database): https://frtz-production.up.railway.app/
+
 ## Prerequisites
 
 - Node.js 18+
-- Symfony API running at `http://127.0.0.1:8000`
-- Demo customer: `php bin/console app:create-demo-customer`
+- Internet access (device or emulator reaches Railway)
 
 ## Run
 
@@ -18,13 +27,7 @@ npm start
 
 Press `w` for web, or scan QR with Expo Go on a device.
 
-### API URL
-
-| Environment | API base URL |
-|-------------|----------------|
-| Web / iOS simulator | `http://127.0.0.1:8000` |
-| Android emulator | `http://10.0.2.2:8000` (set in Profile tab) |
-| Physical device | Your PC LAN IP, e.g. `http://192.168.1.x:8000` |
+After switching from a local API build, **log in again** (old JWT tokens are invalid).
 
 ## Features (end-to-end)
 
@@ -37,4 +40,5 @@ Press `w` for web, or scan QR with Expo Go on a device.
 ## Demo credentials
 
 - `customer@pawcare.local` / `Customer@12345`
-- `fritzmarvindayanan@gmail.com` / `Customer@12345` (after `app:create-demo-customer`)
+
+(Account must exist on Railway; run `php bin/console app:create-demo-customer` in Railway shell if needed.)

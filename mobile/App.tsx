@@ -13,7 +13,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import { getToken, logout, apiRequest, login, register, setApiBaseUrl, getApiBaseUrl, type Product, type SyncData } from './src/api';
+import { getToken, logout, apiRequest, login, register, type Product, type SyncData } from './src/api';
 import { theme } from './src/theme';
 import { Screen, Title, Subtitle, Card, Input, Button, ErrorBanner } from './src/components/Ui';
 
@@ -51,7 +51,7 @@ function LoginScreen({ onLoggedIn }: { onLoggedIn: () => void }) {
     }
 
     if (mode === 'register') {
-      Alert.alert('Account created', 'Verify your email, then log in. For demo use customer@pawcare.local after running app:create-demo-customer.');
+      Alert.alert('Account created', 'Verify your email, then log in.');
       setMode('login');
       return;
     }
@@ -62,7 +62,7 @@ function LoginScreen({ onLoggedIn }: { onLoggedIn: () => void }) {
   return (
     <Screen>
       <Title>FRTZ PawCare</Title>
-      <Subtitle>Customer mobile app — syncs with web & API</Subtitle>
+      <Subtitle>Connected to frtz-production.up.railway.app</Subtitle>
       {error ? <ErrorBanner message={error} /> : null}
       <Input placeholder="Email" autoCapitalize="none" keyboardType="email-address" value={email} onChangeText={setEmail} />
       <Input placeholder="Password" secureTextEntry value={password} onChangeText={setPassword} />
@@ -247,18 +247,12 @@ function OrdersScreen() {
 
 function ProfileScreen({ onLogout }: { onLogout: () => void }) {
   const { data, error, refreshing, refresh } = useSync();
-  const [apiUrl, setApiUrl] = useState(getApiBaseUrl());
-
-  const saveUrl = async () => {
-    setApiBaseUrl(apiUrl.trim() || getApiBaseUrl());
-    Alert.alert('Saved', `API base: ${getApiBaseUrl()}`);
-    await refresh();
-  };
 
   return (
     <Screen>
       <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} tintColor={theme.violet} />}>
         <Title>Profile</Title>
+        <Subtitle>API: https://frtz-production.up.railway.app</Subtitle>
         {error ? <ErrorBanner message={error} /> : null}
         {data?.user ? (
           <Card>
@@ -267,9 +261,6 @@ function ProfileScreen({ onLogout }: { onLogout: () => void }) {
             <Text style={styles.itemMeta}>Last sync: {new Date(data.syncedAt).toLocaleString()}</Text>
           </Card>
         ) : null}
-        <Subtitle>API URL (use http://10.0.2.2:8000 on Android emulator)</Subtitle>
-        <Input value={apiUrl} onChangeText={setApiUrl} autoCapitalize="none" />
-        <Button label="Save API URL" onPress={saveUrl} />
         <Button label="Log out" onPress={onLogout} variant="ghost" />
       </ScrollView>
     </Screen>

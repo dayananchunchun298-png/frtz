@@ -15,7 +15,7 @@ services:
       DEFAULT_URI: "${APP_URL:-http://127.0.0.1:8000}"
       DATABASE_URL: "mysql://${MYSQL_USER:-FRTZPAWS}:${MYSQL_PASSWORD:-121212}@mysql:3306/${MYSQL_DATABASE:-my}?serverVersion=8.0&charset=utf8mb4"
       PORT: "8000"
-      # PHP-FPM crashes on Docker Desktop (Windows); use built-in server + nginx proxy
+      # PHP-FPM is unreliable on Docker Desktop (Windows); use built-in server + nginx proxy
       PHP_RUNTIME: "builtin"
     env_file:
       - .env

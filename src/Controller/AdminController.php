@@ -13,6 +13,7 @@ use App\Repository\ProductRepository;
 use App\Repository\ServiceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -30,6 +31,28 @@ final class AdminController extends AbstractController
             'products' => $productRepository->findAll(),
             'services' => $serviceRepository->findAll(),
             'canManageAppointments' => $canManageAppointments,
+        ]);
+    }
+
+    #[Route('/appointments/fragment', name: 'app_admin_appointments_fragment', methods: ['GET'])]
+    public function appointmentsFragment(AppointmentRepository $appointmentRepository): JsonResponse
+    {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            return $this->json([
+                'ok' => false,
+                'error' => 'forbidden',
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        $appointments = $appointmentRepository->findAll();
+        $html = $this->renderView('admin/_appointments_grid.html.twig', [
+            'appointments' => $appointments,
+        ]);
+
+        return $this->json([
+            'ok' => true,
+            'count' => \count($appointments),
+            'html' => $html,
         ]);
     }
 

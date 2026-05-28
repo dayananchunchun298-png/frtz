@@ -31,7 +31,7 @@
                     <a class="admin-menu-item active" href="{{ path('app_admin') }}#dashboard">Dashboard</a>
                     {% if canManageAppointments|default(false) %}
                         <a class="admin-menu-item" href="{{ path('app_admin') }}#appointments">Appointments
-                            <span class="admin-badge">{{ (appointments|default([]))|length }}</span>
+                            <span id="admin-appointments-badge" class="admin-badge">{{ (appointments|default([]))|length }}</span>
                         </a>
                     {% endif %}
                     <a class="admin-menu-item" href="{{ path('app_admin') }}#products">Products
