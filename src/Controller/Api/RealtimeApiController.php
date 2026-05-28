@@ -14,13 +14,14 @@ final class RealtimeApiController extends AbstractController
     #[Route('/events', name: 'api_realtime_events', methods: ['GET'])]
     public function events(Request $request, RealtimeEventBus $bus): JsonResponse
     {
-        $since = $request->query->getString('since', '');
-        $events = $bus->getSince($since !== '' ? $since : null);
+        $after = max(0, $request->query->getInt('after', 0));
+        $events = $bus->getAfter($after);
 
         return $this->json([
             'ok' => true,
             'events' => $events,
             'count' => \count($events),
+            'lastSeq' => $bus->getLastSeq(),
         ]);
     }
 }
