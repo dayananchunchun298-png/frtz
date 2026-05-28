@@ -11,6 +11,7 @@ use App\Form\ServiceType;
 use App\Repository\AppointmentRepository;
 use App\Repository\ProductRepository;
 use App\Repository\ServiceRepository;
+use App\Service\RealtimeEventBus;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -21,6 +22,11 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/admin')]
 final class AdminController extends AbstractController
 {
+    public function __construct(
+        private readonly RealtimeEventBus $realtime,
+    ) {
+    }
+
     #[Route('', name: 'app_admin')]
     public function index(AppointmentRepository $appointmentRepository, ProductRepository $productRepository, ServiceRepository $serviceRepository): Response
     {
@@ -56,6 +62,72 @@ final class AdminController extends AbstractController
         ]);
     }
 
+    #[Route('/products/fragment', name: 'app_admin_products_fragment', methods: ['GET'])]
+    public function productsFragment(ProductRepository $productRepository): JsonResponse
+    {
+        $products = $productRepository->findAll();
+        $html = $this->renderView('admin/_products_grid.html.twig', [
+            'products' => $products,
+        ]);
+
+        return $this->json([
+            'ok' => true,
+            'count' => \count($products),
+            'html' => $html,
+        ]);
+    }
+
+    #[Route('/services/fragment', name: 'app_admin_services_fragment', methods: ['GET'])]
+    public function servicesFragment(ServiceRepository $serviceRepository): JsonResponse
+    {
+        $services = $serviceRepository->findAll();
+        $html = $this->renderView('admin/_services_grid.html.twig', [
+            'services' => $services,
+        ]);
+
+        return $this->json([
+            'ok' => true,
+            'count' => \count($services),
+            'html' => $html,
+        ]);
+    }
+
+    #[Route('/dashboard/poll', name: 'app_admin_dashboard_poll', methods: ['GET'])]
+    public function dashboardPoll(
+        AppointmentRepository $appointmentRepository,
+        ProductRepository $productRepository,
+        ServiceRepository $serviceRepository,
+    ): JsonResponse {
+        $canManageAppointments = $this->isGranted('ROLE_ADMIN');
+
+        $products = $productRepository->findAll();
+        $services = $serviceRepository->findAll();
+        $appointments = $canManageAppointments ? $appointmentRepository->findAll() : [];
+
+        $payload = [
+            'ok' => true,
+            'products' => [
+                'count' => \count($products),
+                'html' => $this->renderView('admin/_products_grid.html.twig', ['products' => $products]),
+            ],
+            'services' => [
+                'count' => \count($services),
+                'html' => $this->renderView('admin/_services_grid.html.twig', ['services' => $services]),
+            ],
+        ];
+
+        if ($canManageAppointments) {
+            $payload['appointments'] = [
+                'count' => \count($appointments),
+                'html' => $this->renderView('admin/_appointments_grid.html.twig', [
+                    'appointments' => $appointments,
+                ]),
+            ];
+        }
+
+        return $this->json($payload);
+    }
+
     #[Route('/appointment/new', name: 'app_admin_appointment_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -66,6 +138,11 @@ final class AdminController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($appointment);
             $entityManager->flush();
+
+            $this->realtime->publish('appointment.created', [
+                'entity' => 'appointment',
+                'id' => $appointment->getId(),
+            ]);
             
             $this->addFlash('success', 'Appointment for ' . $appointment->getName() . ' has been successfully booked!');
 
@@ -94,6 +171,11 @@ final class AdminController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
+
+            $this->realtime->publish('appointment.updated', [
+                'entity' => 'appointment',
+                'id' => $appointment->getId(),
+            ]);
             
             $this->addFlash('success', 'Appointment for ' . $appointment->getName() . ' has been successfully updated!');
 
@@ -110,8 +192,14 @@ final class AdminController extends AbstractController
     public function delete(Request $request, Appointment $appointment, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$appointment->getId(), $request->getPayload()->getString('_token'))) {
+            $appointmentId = $appointment->getId();
             $entityManager->remove($appointment);
             $entityManager->flush();
+
+            $this->realtime->publish('appointment.cancelled', [
+                'entity' => 'appointment',
+                'id' => $appointmentId,
+            ]);
             
             $this->addFlash('success', 'Appointment for ' . $appointment->getName() . ' has been successfully deleted!');
         }
@@ -131,6 +219,13 @@ final class AdminController extends AbstractController
             $product->setUpdatedAt(new \DateTime());
             $entityManager->persist($product);
             $entityManager->flush();
+
+            $this->realtime->publish('product.created', [
+                'entity' => 'product',
+                'id' => $product->getId(),
+                'stock' => $product->getStock(),
+            ]);
+            $this->realtime->publish('catalog.updated', ['source' => 'admin_product_create']);
             
             $this->addFlash('success', 'Product "' . $product->getName() . '" has been successfully created!');
 
@@ -160,6 +255,17 @@ final class AdminController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $product->setUpdatedAt(new \DateTime());
             $entityManager->flush();
+
+            $this->realtime->publish('product.updated', [
+                'entity' => 'product',
+                'id' => $product->getId(),
+                'stock' => $product->getStock(),
+            ]);
+            $this->realtime->publish('inventory.stock.updated', [
+                'entity' => 'product',
+                'id' => $product->getId(),
+                'stock' => $product->getStock(),
+            ]);
             
             $this->addFlash('success', 'Product "' . $product->getName() . '" has been successfully updated!');
 
@@ -176,8 +282,15 @@ final class AdminController extends AbstractController
     public function deleteProduct(Request $request, Product $product, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$product->getId(), $request->getPayload()->getString('_token'))) {
+            $productId = $product->getId();
             $entityManager->remove($product);
             $entityManager->flush();
+
+            $this->realtime->publish('product.deleted', [
+                'entity' => 'product',
+                'id' => $productId,
+            ]);
+            $this->realtime->publish('catalog.updated', ['source' => 'admin_product_delete']);
             
             $this->addFlash('success', 'Product "' . $product->getName() . '" has been successfully deleted!');
         }
@@ -197,6 +310,12 @@ final class AdminController extends AbstractController
             $service->setUpdatedAt(new \DateTime());
             $entityManager->persist($service);
             $entityManager->flush();
+
+            $this->realtime->publish('service.created', [
+                'entity' => 'service',
+                'id' => $service->getId(),
+            ]);
+            $this->realtime->publish('catalog.updated', ['source' => 'admin_service_create']);
             
             $this->addFlash('success', 'Service "' . $service->getName() . '" has been successfully created!');
 
@@ -226,6 +345,11 @@ final class AdminController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $service->setUpdatedAt(new \DateTime());
             $entityManager->flush();
+
+            $this->realtime->publish('service.updated', [
+                'entity' => 'service',
+                'id' => $service->getId(),
+            ]);
             
             $this->addFlash('success', 'Service "' . $service->getName() . '" has been successfully updated!');
 
@@ -242,8 +366,15 @@ final class AdminController extends AbstractController
     public function deleteService(Request $request, Service $service, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$service->getId(), $request->getPayload()->getString('_token'))) {
+            $serviceId = $service->getId();
             $entityManager->remove($service);
             $entityManager->flush();
+
+            $this->realtime->publish('service.deleted', [
+                'entity' => 'service',
+                'id' => $serviceId,
+            ]);
+            $this->realtime->publish('catalog.updated', ['source' => 'admin_service_delete']);
             
             $this->addFlash('success', 'Service "' . $service->getName() . '" has been successfully deleted!');
         }

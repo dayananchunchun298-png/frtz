@@ -11,6 +11,7 @@ final class PaymentService
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly RealtimeEventBus $realtime,
     ) {
     }
 
@@ -36,6 +37,12 @@ final class PaymentService
 
         $this->entityManager->persist($payment);
         $this->entityManager->flush();
+
+        $this->realtime->publish('order.paid', [
+            'entity' => 'order',
+            'id' => $order->getId(),
+        ]);
+        $this->realtime->publish('catalog.updated', ['source' => 'payment']);
 
         return $payment;
     }

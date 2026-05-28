@@ -14,6 +14,7 @@ use App\Service\ApiResponseFactory;
 use App\Service\CustomerDataSerializer;
 use App\Service\OrderCheckoutService;
 use App\Service\PaymentService;
+use App\Service\RealtimeEventBus;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -37,6 +38,7 @@ final class MobileApiController extends AbstractController
         private readonly PaymentService $paymentService,
         private readonly EntityManagerInterface $entityManager,
         private readonly ValidatorInterface $validator,
+        private readonly RealtimeEventBus $realtime,
     ) {
     }
 
@@ -221,6 +223,12 @@ final class MobileApiController extends AbstractController
 
         $this->entityManager->persist($appointment);
         $this->entityManager->flush();
+
+        $this->realtime->publish('appointment.created', [
+            'entity' => 'appointment',
+            'id' => $appointment->getId(),
+            'data' => $this->serializer->appointment($appointment),
+        ]);
 
         return $this->api->success($this->serializer->appointment($appointment), Response::HTTP_CREATED);
     }

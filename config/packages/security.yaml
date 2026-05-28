@@ -65,6 +65,7 @@ security:
         - { path: ^/api/contexts, roles: PUBLIC_ACCESS }
         - { path: ^/api/register, roles: PUBLIC_ACCESS }
         - { path: ^/api/verify-email, roles: PUBLIC_ACCESS }
+        - { path: ^/api/realtime/events$, roles: PUBLIC_ACCESS }
         - { path: ^/api/mobile/(health|products|services|sync/catalog)$, roles: PUBLIC_ACCESS }
         - { path: ^/api/mobile, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api/customer, roles: IS_AUTHENTICATED_FULLY }

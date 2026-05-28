@@ -15,6 +15,7 @@ final class OrderCheckoutService
     public function __construct(
         private readonly ProductRepository $productRepository,
         private readonly EntityManagerInterface $entityManager,
+        private readonly RealtimeEventBus $realtime,
     ) {
     }
 
@@ -75,6 +76,26 @@ final class OrderCheckoutService
 
         $this->entityManager->persist($order);
         $this->entityManager->flush();
+
+        $productIds = [];
+        foreach ($order->getItems() as $item) {
+            $product = $item->getProduct();
+            if ($product?->getId() !== null) {
+                $productIds[] = $product->getId();
+                $this->realtime->publish('inventory.stock.updated', [
+                    'entity' => 'product',
+                    'id' => $product->getId(),
+                    'stock' => $product->getStock(),
+                ]);
+            }
+        }
+
+        $this->realtime->publish('order.checked_out', [
+            'entity' => 'order',
+            'id' => $order->getId(),
+            'productIds' => $productIds,
+        ]);
+        $this->realtime->publish('catalog.updated', ['source' => 'checkout']);
 
         return $order;
     }

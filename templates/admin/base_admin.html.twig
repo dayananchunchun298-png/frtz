@@ -35,10 +35,10 @@
                         </a>
                     {% endif %}
                     <a class="admin-menu-item" href="{{ path('app_admin') }}#products">Products
-                        <span class="admin-badge">{{ (products|default([]))|length }}</span>
+                        <span id="admin-products-badge" class="admin-badge">{{ (products|default([]))|length }}</span>
                     </a>
                     <a class="admin-menu-item" href="{{ path('app_admin') }}#services">Services
-                        <span class="admin-badge">{{ (services|default([]))|length }}</span>
+                        <span id="admin-services-badge" class="admin-badge">{{ (services|default([]))|length }}</span>
                     </a>
                     <div class="admin-menu-spacer"></div>
                     <a class="admin-menu-item" href="{{ path('app_home') }}">View Site</a>
