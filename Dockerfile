@@ -33,6 +33,11 @@ RUN if [ ! -f .env ]; then cp .env.dist .env; fi \
          composer install --prefer-dist --no-dev --optimize-autoloader --no-scripts; \
        fi
 
+# Bake compiled front-end assets into the image (importmap() fails in prod without these).
+RUN APP_ENV=prod APP_DEBUG=0 APP_SECRET=DockerBuildOnlyNotUsedAtRuntime123 \
+    php bin/console importmap:install --no-interaction \
+    && php bin/console asset-map:compile
+
 COPY docker/php-local.ini /usr/local/etc/php/conf.d/99-local.ini
 COPY docker/nginx-main.conf /etc/nginx/nginx.conf
 COPY docker/nginx.conf /etc/nginx/default-fpm.conf

@@ -12,6 +12,16 @@ fi
 PORT="${PORT:-8000}"
 PHP_RUNTIME="${PHP_RUNTIME:-auto}"
 
+# Symfony only recognizes "prod", not "production"
+case "${APP_ENV:-prod}" in
+    production) export APP_ENV=prod ;;
+esac
+
+# Keep DEFAULT_URI in sync with APP_URL for routing / emails
+if [ -n "${APP_URL:-}" ]; then
+    export DEFAULT_URI="${APP_URL}"
+fi
+
 # Ensure .env exists (image ships .env.dist; compose may mount host .env)
 if [ ! -f .env ]; then
     cp .env.dist .env
@@ -25,12 +35,8 @@ is_railway() {
         || [ -n "${RAILWAY_REPLICA_ID:-}" ]
 }
 
-PHP_PID=""
-if is_railway; then
-    echo "Railway detected: starting web server early on 0.0.0.0:${PORT} (healthcheck can pass while boot continues)..."
-    php -S "0.0.0.0:${PORT}" -t public public/router.php &
-    PHP_PID=$!
-fi
+mkdir -p var/cache var/log var/sessions public/uploads
+chmod -R ug+rwX var public/uploads 2>/dev/null || true
 
 echo "Waiting for database..."
 i=0
@@ -63,8 +69,11 @@ if [ "${APP_ENV:-prod}" = "prod" ]; then
         echo "WARNING: cache warmup failed — check APP_SECRET and env vars."
     fi
     php bin/console assets:install public --no-interaction 2>/dev/null || true
-    php bin/console importmap:install 2>/dev/null || true
-    php bin/console asset-map:compile 2>/dev/null || echo "WARNING: asset-map:compile skipped or failed."
+    if [ ! -f public/assets/importmap.json ]; then
+        echo "Compiled assets missing — running importmap:install and asset-map:compile..."
+        php bin/console importmap:install --no-interaction || echo "WARNING: importmap:install failed."
+        php bin/console asset-map:compile || echo "WARNING: asset-map:compile failed."
+    fi
 fi
 
 chown -R www-data:www-data var public/uploads 2>/dev/null || true
@@ -74,13 +83,6 @@ if [ -d config/jwt ]; then
     chmod -R ug+rwX config/jwt 2>/dev/null || true
 fi
 
-if [ -n "$PHP_PID" ]; then
-    echo "Railway: boot complete, web server pid ${PHP_PID}."
-    wait "$PHP_PID"
-    exit $?
-fi
-
-# Railway fallback if early start did not run (should not happen)
 if is_railway; then
     echo "Railway: starting PHP on 0.0.0.0:${PORT}..."
     exec php -S "0.0.0.0:${PORT}" -t public public/router.php
