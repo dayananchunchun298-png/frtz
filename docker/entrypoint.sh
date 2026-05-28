@@ -38,6 +38,13 @@ is_railway() {
 mkdir -p var/cache var/log var/sessions public/uploads
 chmod -R ug+rwX var public/uploads 2>/dev/null || true
 
+PHP_PID=""
+if is_railway; then
+    echo "Railway: starting web server early on 0.0.0.0:${PORT} (healthcheck while boot continues)..."
+    php -S "0.0.0.0:${PORT}" -t public public/router.php &
+    PHP_PID=$!
+fi
+
 echo "Waiting for database..."
 i=0
 while [ $i -lt 60 ]; do
@@ -85,9 +92,10 @@ if [ -d config/jwt ]; then
     chmod -R ug+rwX config/jwt 2>/dev/null || true
 fi
 
-if is_railway; then
-    echo "Railway: starting PHP on 0.0.0.0:${PORT}..."
-    exec php -S "0.0.0.0:${PORT}" -t public public/router.php
+if [ -n "$PHP_PID" ]; then
+    echo "Railway: boot complete, web server pid ${PHP_PID}."
+    wait "$PHP_PID"
+    exit $?
 fi
 
 use_fpm=0
