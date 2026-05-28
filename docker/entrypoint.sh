@@ -70,8 +70,10 @@ if [ "${APP_ENV:-prod}" = "prod" ]; then
     fi
     php bin/console assets:install public --no-interaction 2>/dev/null || true
     if [ ! -f public/assets/importmap.json ]; then
-        echo "Compiled assets missing — running importmap:install and asset-map:compile..."
-        php bin/console importmap:install --no-interaction || echo "WARNING: importmap:install failed."
+        echo "Compiled assets missing — preparing front-end for production..."
+        if [ ! -f assets/vendor/installed.php ]; then
+            php bin/console importmap:install --no-interaction || echo "WARNING: importmap:install failed (CDN may be unreachable)."
+        fi
         php bin/console asset-map:compile || echo "WARNING: asset-map:compile failed."
     fi
 fi
