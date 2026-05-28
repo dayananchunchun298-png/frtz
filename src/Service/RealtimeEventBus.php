@@ -32,7 +32,7 @@ final class RealtimeEventBus
         ];
 
         if (\count($events) > self::MAX_EVENTS) {
-            $events = \array_slice($events, -\self::MAX_EVENTS);
+            $events = \array_slice($events, -self::MAX_EVENTS);
         }
 
         $this->writeAll($events);

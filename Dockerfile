@@ -33,7 +33,9 @@ RUN if [ ! -f .env ]; then cp .env.dist .env; fi \
          composer install --prefer-dist --no-dev --optimize-autoloader --no-scripts; \
        fi
 
-# asset-map:compile runs at container start (entrypoint) — avoids CDN/network failures during image build.
+# Compile front-end assets at build time (assets/vendor/ is committed; no CDN needed).
+RUN APP_ENV=prod APP_DEBUG=0 APP_SECRET=DockerBuildOnlyNotUsedAtRuntime123 \
+    php bin/console asset-map:compile
 
 COPY docker/php-local.ini /usr/local/etc/php/conf.d/99-local.ini
 COPY docker/nginx-main.conf /etc/nginx/nginx.conf

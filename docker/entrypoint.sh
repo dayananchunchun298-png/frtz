@@ -35,8 +35,9 @@ is_railway() {
         || [ -n "${RAILWAY_REPLICA_ID:-}" ]
 }
 
-mkdir -p var/cache var/log var/sessions public/uploads
+mkdir -p var/cache var/log var/sessions var/data public/uploads
 chmod -R ug+rwX var public/uploads 2>/dev/null || true
+rm -f var/.boot-complete
 
 PHP_PID=""
 if is_railway; then
@@ -84,6 +85,9 @@ if [ "${APP_ENV:-prod}" = "prod" ]; then
         php bin/console asset-map:compile || echo "WARNING: asset-map:compile failed."
     fi
 fi
+
+touch var/.boot-complete
+echo "Application ready (Symfony routes enabled)."
 
 chown -R www-data:www-data var public/uploads 2>/dev/null || true
 chmod -R ug+rwX var public/uploads 2>/dev/null || true
