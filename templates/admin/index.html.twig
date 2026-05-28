@@ -16,7 +16,7 @@
     </div>
 </div>
 
-<section id="dashboard-tab" class="tab-content" style="display: block;">
+<section id="dashboard-tab" class="tab-content" style="display: {{ activeSection|default('dashboard') == 'dashboard' ? 'block' : 'none' }};">
     <div class="appointments-container" style="margin-top: 0;">
         <div class="appointments-header" style="margin-bottom: 10px;">
             <div class="header-content">
@@ -49,7 +49,7 @@
 
 <!-- Tabs removed; sidebar controls navigation -->
 
-<div id="appointments-tab" class="tab-content" style="display: {{ canManageAppointments|default(false) ? 'block' : 'none' }};">
+<div id="appointments-tab" class="tab-content" style="display: {{ canManageAppointments|default(false) and activeSection|default('dashboard') == 'appointments' ? 'block' : 'none' }};">
     {% if canManageAppointments|default(false) %}
     <div class="appointments-header">
         <div class="header-content">
@@ -69,7 +69,7 @@
 </div>
 
 <!-- Products Tab Content -->
-<div id="products-tab" class="tab-content" style="display: none;">
+<div id="products-tab" class="tab-content" style="display: {{ activeSection|default('dashboard') == 'products' ? 'block' : 'none' }};">
     <div class="appointments-container">
         <div class="appointments-header">
             <div class="header-content">
@@ -89,7 +89,7 @@
 </div>
 
 <!-- Services Tab Content -->
-<div id="services-tab" class="tab-content" style="display: none;">
+<div id="services-tab" class="tab-content" style="display: {{ activeSection|default('dashboard') == 'services' ? 'block' : 'none' }};">
     <div class="appointments-container">
         <div class="appointments-header">
             <div class="header-content">
@@ -134,7 +134,7 @@ function showTab(tabName) {
 
 // Initialize from hash on load
 document.addEventListener('DOMContentLoaded', function () {
-    const initial = (window.location.hash || '').replace('#', '');
+    const initial = (window.location.hash || '').replace('#', '') || "{{ activeSection|default('dashboard') }}";
     const canManageAppointments = {{ canManageAppointments|default(false) ? 'true' : 'false' }};
     const isAllowedTab =
         initial === 'dashboard' ||

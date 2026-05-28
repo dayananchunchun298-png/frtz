@@ -28,15 +28,24 @@ final class AdminController extends AbstractController
     }
 
     #[Route('', name: 'app_admin')]
-    public function index(AppointmentRepository $appointmentRepository, ProductRepository $productRepository, ServiceRepository $serviceRepository): Response
+    public function index(Request $request, AppointmentRepository $appointmentRepository, ProductRepository $productRepository, ServiceRepository $serviceRepository): Response
     {
         $canManageAppointments = $this->isGranted('ROLE_ADMIN');
+        $allowedSections = $canManageAppointments
+            ? ['dashboard', 'appointments', 'products', 'services']
+            : ['products', 'services'];
+        $defaultSection = $canManageAppointments ? 'dashboard' : 'products';
+        $activeSection = $request->query->getString('section', $defaultSection);
+        if (!\in_array($activeSection, $allowedSections, true)) {
+            $activeSection = $defaultSection;
+        }
 
         return $this->render('admin/index.html.twig', [
             'appointments' => $canManageAppointments ? $appointmentRepository->findAll() : [],
             'products' => $productRepository->findAll(),
             'services' => $serviceRepository->findAll(),
             'canManageAppointments' => $canManageAppointments,
+            'activeSection' => $activeSection,
         ]);
     }
 

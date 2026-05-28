@@ -28,16 +28,16 @@
                 </div>
 
                 <nav class="admin-menu">
-                    <a class="admin-menu-item active" href="{{ path('app_admin') }}#dashboard">Dashboard</a>
+                    <a class="admin-menu-item {% if activeSection|default('dashboard') == 'dashboard' %}active{% endif %}" href="{{ path('app_admin', { section: 'dashboard' }) }}">Dashboard</a>
                     {% if canManageAppointments|default(false) %}
-                        <a class="admin-menu-item" href="{{ path('app_admin') }}#appointments">Appointments
+                        <a class="admin-menu-item {% if activeSection|default('dashboard') == 'appointments' %}active{% endif %}" href="{{ path('app_admin', { section: 'appointments' }) }}">Appointments
                             <span id="admin-appointments-badge" class="admin-badge">{{ (appointments|default([]))|length }}</span>
                         </a>
                     {% endif %}
-                    <a class="admin-menu-item" href="{{ path('app_admin') }}#products">Products
+                    <a class="admin-menu-item {% if activeSection|default('dashboard') == 'products' %}active{% endif %}" href="{{ path('app_admin', { section: 'products' }) }}">Products
                         <span id="admin-products-badge" class="admin-badge">{{ (products|default([]))|length }}</span>
                     </a>
-                    <a class="admin-menu-item" href="{{ path('app_admin') }}#services">Services
+                    <a class="admin-menu-item {% if activeSection|default('dashboard') == 'services' %}active{% endif %}" href="{{ path('app_admin', { section: 'services' }) }}">Services
                         <span id="admin-services-badge" class="admin-badge">{{ (services|default([]))|length }}</span>
                     </a>
                     <div class="admin-menu-spacer"></div>
